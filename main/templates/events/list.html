@@ -1,0 +1,162 @@
+{% extends 'members/base.html' %}
+{% block title %}Upcoming Events{% endblock %}
+{% block content %}
+<style>
+  /* Wrapper */
+  .events-wrapper {
+    padding: 40px 60px;
+  }
+
+  h2 {
+    color: #2c5282;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+
+  /* Grid layout for equal card alignment */
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+    justify-items: center;
+  }
+
+  /* Frosted glass card style */
+  .card {
+    width: 100%;
+    max-width: 360px;
+    height: 260px; /* ✅ fixed height for uniformity */
+    background: rgba(240, 240, 255, 0.7);
+    border-radius: 18px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .card h5 {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+
+  .card p {
+    color: #555;
+    font-size: 15px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* limit to 4 lines */
+    -webkit-box-orient: vertical;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    background-color: #2c5282;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover {
+    background-color: #1d416d;
+  }
+
+  /* Pagination — matches Join button style */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 10px;
+  }
+
+  .pagination a,
+  .pagination span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 2px solid #2c5282;
+    color: #2c5282;
+    background: transparent;
+  }
+
+  .pagination a:hover {
+    background: #2c5282;
+    color: white;
+  }
+
+  .pagination .active {
+    background: #2c5282;
+    color: white;
+    border-color: #2c5282;
+  }
+
+  .pagination span:not(.active):not(:hover) {
+    opacity: 0.6;
+    cursor: default;
+  }
+</style>
+
+<div class="events-wrapper">
+  <h2>Upcoming Events</h2>
+
+  <div class="events-grid">
+    {% for event in events %}
+      <div class="card">
+        <div>
+          <h5>{{ event.title }} — {{ event.date }}</h5>
+          <p>{{ event.description }}</p>
+        </div>
+        <div>
+          <a href="{% url 'events-detail' event.pk %}" class="btn btn-primary btn-sm">View</a>
+        </div>
+      </div>
+    {% empty %}
+      <p>No upcoming events.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    {% if events.has_previous %}
+      <a href="?page={{ events.previous_page_number }}">&lt;</a>
+    {% else %}
+      <span>&lt;</span>
+    {% endif %}
+
+    {% for num in events.paginator.page_range %}
+      {% if events.number == num %}
+        <span class="active">{{ num }}</span>
+      {% else %}
+        <a href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if events.has_next %}
+      <a href="?page={{ events.next_page_number }}">&gt;</a>
+    {% else %}
+      <span>&gt;</span>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

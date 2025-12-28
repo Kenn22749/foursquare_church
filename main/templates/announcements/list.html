@@ -1,0 +1,128 @@
+{% extends 'members/base.html' %}
+{% block title %}Announcements{% endblock %}
+{% block content %}
+<style>
+  /* 🌤️ Wrapper */
+  .announcements-wrapper {
+    padding: 40px 60px;
+  }
+
+  /* 🌤️ Frosted glass card */
+  .announcement-card {
+    background: rgba(240, 240, 255, 0.7);
+    border-radius: 18px;
+    padding: 25px 30px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .announcement-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  /* Headings and text */
+  .announcement-card h5 {
+    color: #2c5282 !important;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .announcement-card small {
+    color: #555;
+    font-size: 0.9rem;
+  }
+
+  .announcement-card p {
+    color: #222;
+    margin-top: 10px;
+  }
+
+  /* Page title */
+  .page-title {
+    text-align: left;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #2c5282 !important;
+  }
+
+  /* Pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 10px;
+  }
+
+  .pagination a,
+  .pagination span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 2px solid #2c5282;
+    color: #2c5282;
+    background: transparent;
+  }
+
+  .pagination a:hover {
+    background: #2c5282;
+    color: white;
+  }
+
+  .pagination .active {
+    background: #2c5282;
+    color: white;
+    border-color: #2c5282;
+  }
+
+  .pagination span:not(.active):not(:hover) {
+    opacity: 0.6;
+    cursor: default;
+  }
+</style>
+
+<div class="announcements-wrapper">
+  <h3 class="page-title">Announcements</h3>
+
+  {% for a in announcements %}
+    <div class="announcement-card">
+      <h5>{{ a.title }}</h5>
+      <small>Posted on {{ a.publish_date|date:"F d, Y" }}</small>
+      <p>{{ a.content }}</p>
+    </div>
+  {% empty %}
+    <p class="text-center">No announcements.</p>
+  {% endfor %}
+
+  <!-- Pagination -->
+  <div class="pagination">
+    {% if announcements.has_previous %}
+      <a href="?page={{ announcements.previous_page_number }}">&lt;</a>
+    {% else %}
+      <span>&lt;</span>
+    {% endif %}
+
+    {% for num in announcements.paginator.page_range %}
+      {% if announcements.number == num %}
+        <span class="active">{{ num }}</span>
+      {% else %}
+        <a href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if announcements.has_next %}
+      <a href="?page={{ announcements.next_page_number }}">&gt;</a>
+    {% else %}
+      <span>&gt;</span>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

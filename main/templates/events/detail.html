@@ -1,0 +1,11 @@
+{% extends 'members/base.html' %}
+{% block content %}
+<h3>{{ event.title }}</h3>
+<p>{{ event.description }}</p>
+<p>Date: {{ event.date }} Time: {{ event.time }}</p>
+{% if user.is_authenticated %}
+  <a class="btn btn-success" href="{% url 'events-register' event.pk %}">Register</a>
+{% else %}
+  <a class="btn btn-primary" href="{% url 'login' %}">Login to register</a>
+{% endif %}
+{% endblock %}

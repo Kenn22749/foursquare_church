@@ -1,0 +1,168 @@
+{% extends 'members/base.html' %}
+{% block title %}Ministries{% endblock %}
+{% block content %}
+<style>
+  /* Wrapper */
+  .ministries-wrapper {
+    padding: 40px 60px;
+  }
+
+  h3 {
+    color: #2c5282;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+
+  /* Grid layout */
+  .ministries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+    justify-items: center;
+  }
+
+  /* Frosted-glass uniform card (same as Events) */
+  .card {
+    width: 100%;
+    max-width: 360px;
+    height: 260px;
+    background: rgba(240, 240, 255, 0.7);
+    border-radius: 18px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .card h5 {
+    font-weight: 600;
+    color: #2c5282;
+    margin-bottom: 10px;
+    font-size: 17px;
+  }
+
+  .card p {
+    color: #333;
+    font-size: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+  }
+
+  /* Button */
+  .btn-primary {
+    background-color: #2c5282;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover {
+    background-color: #1d416d;
+  }
+
+  /* Pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 10px;
+  }
+
+  .pagination a,
+  .pagination span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 2px solid #2c5282;
+    color: #2c5282;
+    background: transparent;
+  }
+
+  /* Hover state */
+  .pagination a:hover {
+    background: #2c5282;
+    color: white;
+  }
+
+  /* Active page */
+  .pagination .active {
+    background: #2c5282;
+    color: white;
+    border-color: #2c5282;
+  }
+
+  /* Disabled arrow */
+  .pagination span:not(.active):not(:hover) {
+    opacity: 0.6;
+    cursor: default;
+  }
+</style>
+
+<div class="ministries-wrapper">
+  <h3>Ministries</h3>
+
+  <div class="ministries-grid">
+    {% for m in ministries %}
+      <div class="card">
+        <div>
+          <h5>{{ m.name }}</h5>
+          <p>{{ m.description }}</p>
+        </div>
+        <div>
+          {% if user.is_authenticated %}
+            <a href="{% url 'ministries-join' m.pk %}" class="btn btn-primary btn-sm mt-2">Join</a>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-secondary btn-sm mt-2">Login to Join</a>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <p>No ministries yet.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    {% if ministries.has_previous %}
+      <a href="?page={{ ministries.previous_page_number }}">&lt;</a>
+    {% else %}
+      <span>&lt;</span>
+    {% endif %}
+
+    {% for num in ministries.paginator.page_range %}
+      {% if ministries.number == num %}
+        <span class="active">{{ num }}</span>
+      {% else %}
+        <a href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if ministries.has_next %}
+      <a href="?page={{ ministries.next_page_number }}">&gt;</a>
+    {% else %}
+      <span>&gt;</span>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

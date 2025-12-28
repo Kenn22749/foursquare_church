@@ -1,0 +1,47 @@
+{% extends 'admin_ui/layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="page-title">📜 Announcements</h2>
+    <a href="{% url 'admin-announcement-add' %}" class="btn btn-primary">+ Add New</a>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Title</th>
+          <th>Content</th>
+          <th>Active</th>
+          <th>Publish Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in announcements %}
+        <tr>
+          <td>{{ item.title }}</td>
+          <td>{{ item.content|truncatechars:40 }}</td>
+          <td>{{ item.is_active|yesno:"Yes,No" }}</td>
+          <td>{{ item.publish_date|date:"M d, Y, g:i a" }}</td>
+          <td>
+            <a href="{% url 'admin-announcement-edit' item.id %}" class="btn btn-sm btn-warning text-white">Edit</a>
+            <a href="{% url 'admin-announcement-delete' item.id %}" class="btn btn-sm btn-danger"
+               onclick="return confirm('Delete this announcement?');">Delete</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted">No announcements found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

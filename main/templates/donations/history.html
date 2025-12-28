@@ -1,0 +1,62 @@
+{% extends 'members/base.html' %}
+{% block content %}
+<style>
+  .badge-approved {
+    background-color: #28a745;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  .badge-pending {
+    background-color: #ffc107;
+    color: #333;
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+</style>
+
+<h3>Your Donations</h3>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Amount</th>
+      <th>Method</th>
+      <th>Receipt</th>
+      <th>Verified</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for d in donations %}
+    <tr>
+      <td>₱{{ d.amount }}</td>
+      <td>{{ d.method }}</td>
+      <td>
+        {% if d.receipt_image %}
+          <a href="{{ d.receipt_image.url }}" target="_blank" class="text-primary">View</a>
+        {% else %}
+          <span class="text-muted">N/A</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if d.verified %}
+          <span class="badge-approved">✓ Approved</span>
+        {% else %}
+          <span class="badge-pending">⏳ Not Approved Yet</span>
+        {% endif %}
+      </td>
+      <td>{{ d.created_at|date:"M. d, Y, g:i a" }}</td>
+    </tr>
+  {% empty %}
+    <tr>
+      <td colspan="5" class="text-center text-muted py-4">No donations yet</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

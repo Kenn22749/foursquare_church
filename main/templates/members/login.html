@@ -1,0 +1,41 @@
+{% extends 'members/base.html' %}
+{% block title %}Login | Makilala Foursquare{% endblock %}
+
+{% block content %}
+<style>
+/* Church-themed color customization */
+.card h2 {
+    color: #6B4FA3 !important; /* Purple - change to your preferred church color */
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #6B4FA3 0%, #5B4191 100%) !important;
+    border: none !important;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a2378 0%, #5B4191 100%) !important;
+    box-shadow: 0 4px 12px rgba(107, 44, 145, 0.3) !important;
+}
+</style>
+
+<div class="card p-4">
+  <h2>Welcome Back 🙏</h2>
+  <p class="text-center text-muted">Please log in to continue</p>
+  <form method="post" class="mt-3">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      <input type="text" name="username" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input type="password" name="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Login</button>
+  </form>
+  <p class="text-center mt-3 text-small">
+    Don't have an account? <a href="{% url 'register' %}" class="text-primary fw-semibold">Register here</a>
+  </p>
+</div>
+{% endblock %}

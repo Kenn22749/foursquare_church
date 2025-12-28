@@ -1,0 +1,67 @@
+{% extends 'members/base.html' %}
+{% load static %}
+{% block title %}Register - Makilala Foursquare{% endblock %}
+
+{% block content %}
+<style>
+/* Church-themed color customization - Goldenrod Theme */
+.form-container h2 {
+    color: #daa520 !important; /* Goldenrod - divine, majestic */
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #daa520 0%, #daa520 100%) !important;
+    border: none !important;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #9a7009 0%, #daa520 100%) !important;
+    box-shadow: 0 4px 12px rgba(184, 134, 11, 0.3) !important;
+}
+</style>
+
+<div class="form-container">
+  <h2 class="text-center text-primary fw-bold mb-3">
+    Create Account 🙏
+  </h2>
+  <p class="text-center text-muted">Join our church community and stay connected.</p>
+
+  <form method="POST" enctype="multipart/form-data" class="p-3">
+    {% csrf_token %}
+    <div class="mb-3">
+      {{ uform.username.label_tag }} 
+      {{ uform.username }}
+    </div>
+    <div class="mb-3">
+      {{ uform.email.label_tag }}
+      {{ uform.email }}
+    </div>
+    <div class="mb-3">
+      {{ uform.password.label_tag }}
+      {{ uform.password }}
+    </div>
+    <div class="mb-3">
+      {{ pform.contact_number.label_tag }}
+      {{ pform.contact_number }}
+    </div>
+    <div class="mb-3">
+      {{ pform.birth_date.label_tag }}
+      {{ pform.birth_date }}
+    </div>
+    <div class="mb-3">
+      {{ pform.address.label_tag }}
+      {{ pform.address }}
+    </div>
+    <div class="mb-3">
+      {{ pform.photo.label_tag }}
+      {{ pform.photo }}
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Register</button>
+  </form>
+
+  <p class="text-center mt-3 text-small">
+    Already have an account? <a href="{% url 'login' %}" class="text-primary fw-semibold">Login here</a>
+  </p>
+</div>
+{% endblock %}

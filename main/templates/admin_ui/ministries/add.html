@@ -1,0 +1,74 @@
+{% extends 'admin_ui/layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="page-title">➕ Add Ministry</h2>
+
+  <form method="POST" class="form-card">
+    {% csrf_token %}
+
+    <label>Name</label>
+    <input type="text" name="name" required>
+
+    <label>Description</label>
+    <textarea name="description" rows="4"></textarea>
+
+    <label>Coordinator</label>
+    <input type="text" name="coordinator">
+
+    <label class="check">
+      <input type="checkbox" name="is_active" checked> Active
+    </label>
+
+    <div class="form-actions">
+      <button class="btn btn-primary">Save</button>
+      <a href="{% url 'admin-ministry-list' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<style>
+.page-title {
+  color: #3b3b98;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.form-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  max-width: 600px;
+}
+.form-card input[type="text"],
+.form-card textarea {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 15px;
+  outline: none;
+  transition: 0.2s;
+}
+.form-card input:focus, .form-card textarea:focus {
+  border-color: #4a69bd;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+.form-actions {
+  display: flex;
+  gap: 10px;
+}
+.btn-primary {
+  background-color: #4a69bd;
+  border: none;
+}
+.btn-primary:hover {
+  background-color: #3b3b98;
+}
+</style>
+{% endblock %}

@@ -1,4 +1,8 @@
-# Virtual environments (even if global)
+# Django static & media
+media/
+staticfiles/
+
+# Virtual env
 env/
 venv/
 

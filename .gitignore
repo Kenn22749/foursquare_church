@@ -1,8 +1,11 @@
+# Virtual environments (even if global)
+env/
 venv/
+
+# Python
 __pycache__/
 *.pyc
-*.log
+
+# Django
 db.sqlite3
-.env
-media/
-staticfiles/
+*.log

@@ -67,11 +67,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 if os.environ.get("RENDER"):
     # Production (Render)
     DATABASES = {
-        'default': dj_database_url.config(
-            conn_max_age=600,
-            options={'sslmode': 'require'},
-        )
-    }
+    'default': dj_database_url.config(
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
+
 else:
     # Local development
     DATABASES = {

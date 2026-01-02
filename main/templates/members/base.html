@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   {% load static %}
   <meta charset="UTF-8">
@@ -9,158 +11,200 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-/* Enhanced Background Crescent Blend - Foursquare Church Inspired */
+/* ================= FOURSQUARE COLOR PALETTE ================= */
+:root {
+  --fs-blue: #1f4fd8;      /* Coming King */
+  --fs-purple: #6a1fbf;   /* Healer */
+  --fs-gold: #f4c430;     /* Holy Spirit */
+  --fs-red: #c62828;      /* Savior */
+  --fs-light: #f5f7ff;
+}
+
+/* ================= BACKGROUND ================= */
 body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
   background:
-    /* ✨ Subtle glowing crescent on the right side */
-    radial-gradient(
-      circle at 85% 50%, /* moved crescent toward right side */
-      rgba(255, 240, 160, 0.55) 0%,    /* brighter yellow center for glow */
-      rgba(255, 215, 120, 0.38) 20%,
-      rgba(255, 235, 180, 0.28) 40%,
-      rgba(255, 255, 255, 0.15) 60%,   /* soft glow edge */
-      rgba(0, 0, 0, 0) 80%
+    radial-gradient(circle at 85% 50%,
+      rgba(244,196,48,0.45),
+      rgba(0,0,0,0) 70%
     ),
-    /* secondary color field to balance the glow */
-    radial-gradient(
-      circle at 20% 40%,
-      rgba(60, 90, 230, 0.25) 0%,      /* grounded blue accent */
-      rgba(220, 50, 50, 0.18) 30%,     /* warm red accent */
-      rgba(250, 210, 0, 0.18) 55%,     /* yellow accent */
-      rgba(130, 30, 180, 0.15) 75%,    /* purple accent */
-      rgba(0, 0, 0, 0) 100%
+    radial-gradient(circle at 20% 40%,
+      rgba(31,79,216,0.25),
+      rgba(106,31,191,0.2),
+      rgba(0,0,0,0) 80%
     ),
-    #d6dbe5; /* slightly deeper cool base tone for contrast */
-
+    #d6dbe5;
   background-attachment: fixed;
-  background-blend-mode: screen, normal; /* makes the crescent appear glowing */
 }
 
-
-/* Header Container */
+/* ================= NAVBAR ================= */
 .navbar {
-  background-color: #fff;
+  background: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  padding: 0.7rem 2rem;
+  padding: 0.7rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1200;
 }
 
 .navbar-brand {
   font-weight: bold;
-  color: #0d6efd !important;
+  color: var(--fs-blue) !important;
   font-size: 1.3rem;
 }
 
-.navbar-nav .nav-link {
-  color: #333 !important;
-  font-size: 16px;
-  margin: 0 14px; /* ✅ Adds horizontal spacing between links */
-  transition: color 0.3s ease;
+/* ================= TOGGLE BUTTON ================= */
+.menu-toggle {
+  background: linear-gradient(135deg, #5aa0f0, #3c6cc0); /* soft Foursquare blue gradient */
+  color: #fff;
+  border: none;
+  font-size: 1.6rem;
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(58,108,192,0.4); /* matches gradient tone */
 }
 
-.navbar-nav .nav-link:hover {
-  color: #0d6efd !important;
+
+.menu-toggle:hover {
+  background: linear-gradient(135deg, #3b7fc9ff, #226bb5ff); /* lighter soft blue on hover */
 }
 
-/* 💻 Desktop: one-row layout */
-@media (min-width: 769px) {
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
 
-  .nav-links {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .navbar-nav {
-    display: flex;
-    align-items: center;
-  }
+/* ================= LEFT SLIDE MENU ================= */
+.slide-menu {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 260px;
+  height: 100%;
+  background:
+    radial-gradient(circle at 85% 50%,
+      rgba(244,196,48,0.45),
+      rgba(0,0,0,0) 70%
+    ),
+    radial-gradient(circle at 20% 40%,
+      rgba(31,79,216,0.25),
+      rgba(106,31,191,0.2),
+      rgba(0,0,0,0) 80%
+    ),
+    rgba(255,255,255,0.95); /* overlay to reduce transparency */
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow: 8px 0 20px rgba(0,0,0,0.25);
+  padding: 90px 18px 20px;
+  transition: left 0.35s ease;
+  z-index: 2000;
 }
 
-/* 📱 Mobile: two-row layout */
-@media (max-width: 768px) {
-  .navbar {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 1rem;
-  }
 
-  .nav-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 10px; /* ✅ Adds gap between nav items */
-    width: 100%;
-    margin-top: 8px;
-  }
-
-  .navbar-nav .nav-link {
-    margin: 0 8px; /* ✅ Small spacing for mobile too */
-  }
+.slide-menu.active {
+  left: 0;
 }
+
+/* ================= MENU BUTTONS ================= */
+.menu-btn {
+  display: block;
+  text-decoration: none;
+  background: linear-gradient(135deg, #5aa0f0, #3c6cc0);
+  color: #1a1a1a;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 500;
+  margin-bottom: 15px;
+  text-align: center;
+  box-shadow: 0 6px 14px rgba(31,79,216,0.35);
+  transition: all 0.25s ease;
+}
+
+.menu-btn:hover {
+  background: linear-gradient(135deg, var(--fs-gold), var(--fs-purple));
+  color: #1a1a1a;
+  transform: translateX(6px);
+}
+
+/* ================= LOGOUT (RED) ================= */
+.logout-btn {
+  background: linear-gradient(135deg, #e53935, var(--fs-red));
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(198,40,40,0.4);
+}
+
+.logout-btn:hover {
+  background: linear-gradient(135deg, var(--fs-red), #8e0000);
+  color: #fff;
+}
+
+/* ================= OVERLAY ================= */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1500;
+}
+
+.menu-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
 </style>
-
 
 </head>
 
 <body>
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="w-100">
-      <!-- Row 1: Brand -->
-      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-        <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
-         <img src="{% static 'images/favicon.png' %}" alt="Makilala Foursquare Church Logo" 
-         width="32" height="32" class="me-2 logo-box"> <span>Makilala Foursquare Church</span></a>
 
-        <!-- Row 1 right-side links (Desktop only) -->
-        <div class="nav-links d-none d-md-flex">
-          <ul class="navbar-nav d-flex flex-row mb-0">
-            {% if user.is_authenticated %}
-              <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'events-list' %}">Events</a></li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'donations-donate' %}">Donations</a></li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'ministries-list' %}">Ministries</a></li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'announcements-list' %}">Announcements</a></li>
-              <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a></li>
-            {% endif %}
-          </ul>
-        </div>
-      </div>
+<!-- NAVBAR -->
+<nav class="navbar">
+  {% if user.is_authenticated %}
+  <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  {% endif %}
 
-      <!-- Row 2: Mobile Navigation -->
-      <div class="nav-links d-md-none mt-2">
-        <ul class="navbar-nav d-flex flex-row flex-wrap mb-0">
-          {% if user.is_authenticated %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'events-list' %}">Events</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'donations-donate' %}">Donations</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'ministries-list' %}">Ministries</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'announcements-list' %}">Announcements</a></li>
-            <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a></li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-  </nav>
+  <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+    <img src="{% static 'images/favicon.png' %}" width="32" height="32" class="me-2">
+    Makilala Foursquare Church
+  </a>
+</nav>
 
-  <!-- CONTENT -->
-  <div class="container mt-4">
-    {% if messages %}
-      {% for msg in messages %}
-        <div class="alert alert-{{ msg.tags }} text-center shadow-sm">{{ msg }}</div>
-      {% endfor %}
-    {% endif %}
-    {% block content %}{% endblock %}
-  </div>
+<!-- OVERLAY -->
+<div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- LEFT SLIDE MENU -->
+{% if user.is_authenticated %}
+<div id="slideMenu" class="slide-menu">
+  <a href="{% url 'dashboard' %}" class="menu-btn">Dashboard</a>
+  <a href="{% url 'events-list' %}" class="menu-btn">Events</a>
+  <a href="{% url 'donations-donate' %}" class="menu-btn">Donations</a>
+  <a href="{% url 'ministries-list' %}" class="menu-btn">Ministries</a>
+  <a href="{% url 'announcements-list' %}" class="menu-btn">Announcements</a>
+  <a href="{% url 'logout' %}" class="menu-btn logout-btn">Logout</a>
+</div>
+{% endif %}
+
+<!-- CONTENT -->
+<div class="container mt-4">
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-{{ msg.tags }} text-center shadow-sm">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+  {% block content %}{% endblock %}
+</div>
+
+<!-- JS -->
+<script>
+function toggleMenu() {
+  document.getElementById("slideMenu").classList.toggle("active");
+  document.getElementById("menuOverlay").classList.toggle("active");
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

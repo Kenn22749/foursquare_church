@@ -34,7 +34,6 @@
     <tr>
       <th>Fund Type</th>
       <th>Amount</th>
-      <th>GCash Reference no.</th>
       <th>Receipt</th>
       <th>Submitted</th>
       <th>Status</th>
@@ -48,8 +47,6 @@
       <td>{{ d.fund_type }}</td>
 
       <td>₱{{ d.amount }}</td>
-
-      <td>{{ d.gcash_reference|default:"N/A" }}</td>
 
       <td>
         {% if d.receipt_image %}
@@ -102,7 +99,7 @@
 
   {% empty %}
     <tr>
-      <td colspan="6" class="text-center text-muted py-4">
+      <td colspan="5" class="text-center text-muted py-4">
         No fund records yet
       </td>
     </tr>

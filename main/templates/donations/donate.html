@@ -5,7 +5,7 @@
 {% block content %}
 <div class="form-container">
   <h2 class="text-center text-success fw-bold mb-2">Submit GCash Fund</h2>
-  <p class="text-center text-muted mb-4">For donations, and other church funds.</p>
+  <p class="text-center text-muted mb-4">For donations and offerings.</p>
 
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
@@ -21,23 +21,22 @@
     </div>
 
     <div class="mb-3">
-      {{ form.gcash_reference.label_tag }}
-      {{ form.gcash_reference }}
-      <small class="text-muted">Enter the reference number from your GCash receipt.</small>
-    </div>
-
-    <div class="mb-3">
       {{ form.receipt_image.label_tag }}
       {{ form.receipt_image }}
       <small class="text-muted d-block mt-1">
         Please upload a clear photo of your GCash receipt.
       </small>
+
       {% if form.receipt_image.errors %}
-        <div class="text-danger small mt-1">{{ form.receipt_image.errors }}</div>
+        <div class="text-danger small mt-1">
+          {{ form.receipt_image.errors }}
+        </div>
       {% endif %}
     </div>
 
-    <button type="submit" class="btn btn-success w-100">Submit Fund Record</button>
+    <button type="submit" class="btn btn-success w-100">
+      Submit
+    </button>
   </form>
 </div>
 {% endblock %}

@@ -2,9 +2,7 @@
 
 {% block content %}
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="page-title">👤 Members Profile</h2>
-  </div>
+  <h2 class="page-title mb-3">👤 Members Profile</h2>
 
   {% if messages %}
     {% for message in messages %}
@@ -22,9 +20,12 @@
           <th>Email</th>
           <th>Contact</th>
           <th>Relationship</th>
+          <th>Birth Date</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
+
       <tbody>
         {% for m in members %}
         <tr>
@@ -35,22 +36,65 @@
               <div style="width:40px; height:40px; background:#ddd; border-radius:50%;"></div>
             {% endif %}
           </td>
+
           <td>{{ m.user.username }}</td>
-          <td>{{ m.first_name }} {{ m.middle_name }} {{ m.last_name }} {{ m.suffix }}</td>
-          <td>{{ m.email_address }}</td>
-          <td>{{ m.contact_number }}</td>
-          <td>{{ m.relationship_status }}</td>
+
           <td>
-            <a href="{% url 'admin-memberprofile-edit' m.id %}" class="btn btn-sm btn-warning text-white">Edit</a>
-            <a href="{% url 'admin-memberprofile-delete' m.id %}" class="btn btn-sm btn-danger"
+            {{ m.first_name }} {{ m.middle_name }} {{ m.last_name }} {{ m.suffix }}
+          </td>
+
+          <td>{{ m.email_address }}</td>
+
+          <td>{{ m.contact_number }}</td>
+
+          <td>
+            {% if m.relationship_status %}
+              {{ m.get_relationship_status_display }}
+            {% else %}
+              <span class="text-muted">N/A</span>
+            {% endif %}
+          </td>
+
+          <td>
+            {% if m.birth_date %}
+              {{ m.birth_date|date:"M. d, Y" }}
+            {% else %}
+              <span class="text-muted">N/A</span>
+            {% endif %}
+          </td>
+
+          <td>
+            {% if m.user.is_active %}
+              <span class="badge bg-success">Approved</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Pending</span>
+            {% endif %}
+          </td>
+
+          <td>
+            {% if not m.user.is_active %}
+              <a href="{% url 'admin-memberprofile-approve' m.id %}"
+                 class="btn btn-sm btn-success mb-1">
+                Approve
+              </a>
+            {% endif %}
+
+            <a href="{% url 'admin-memberprofile-edit' m.id %}"
+               class="btn btn-sm btn-warning text-white mb-1">
+              Edit
+            </a>
+
+            <a href="{% url 'admin-memberprofile-delete' m.id %}"
+               class="btn btn-sm btn-danger mb-1"
                onclick="return confirm('Are you sure you want to delete this profile?');">
-               Delete
+              Delete
             </a>
           </td>
         </tr>
+
         {% empty %}
         <tr>
-          <td colspan="7" class="text-center text-muted">No member profiles found.</td>
+          <td colspan="9" class="text-center text-muted">No member profiles found.</td>
         </tr>
         {% endfor %}
       </tbody>

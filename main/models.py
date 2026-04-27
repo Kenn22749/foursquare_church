@@ -41,8 +41,8 @@ class Announcement(models.Model):
 
 class Donation(models.Model):
     FUND_TYPE_CHOICES = [
-        ('Donation', 'Donation'),
-        ('Others', 'Others'),
+    ('Donation', 'Donation'),
+    ('Offering', 'Offering'),
     ]
 
     STATUS_CHOICES = [
@@ -56,7 +56,6 @@ class Donation(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     method = models.CharField(max_length=10, default='GCash')
-    gcash_reference = models.CharField(max_length=100, unique=True)
 
     receipt_image = models.ImageField(upload_to='donation_receipts/', null=True, blank=True)
 

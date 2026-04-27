@@ -20,38 +20,62 @@ def register(request):
     if request.method == 'POST':
         uform = UserRegisterForm(request.POST)
         pform = MemberProfileForm(request.POST, request.FILES)
+
         if uform.is_valid() and pform.is_valid():
             user = uform.save(commit=False)
             user.set_password(uform.cleaned_data['password'])
+            user.is_active = False
             user.save()
+
             profile = pform.save(commit=False)
             profile.user = user
+
+            # If user entered email, copy it to MemberProfile email_address
+            profile.email_address = user.email or ""
+
             profile.save()
-            messages.success(request, "Account created. You can log in now.")
+
+            messages.success(
+                request,
+                "Registration submitted. Please wait for admin approval before logging in."
+            )
             return redirect('login')
     else:
         uform = UserRegisterForm()
         pform = MemberProfileForm()
-    return render(request, 'members/register.html', {'uform': uform, 'pform': pform})
+
+    return render(request, 'members/register.html', {
+        'uform': uform,
+        'pform': pform
+    })
 
 
 def login_user(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
+
+        try:
+            user_obj = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user_obj = None
+
+        if user_obj is not None and not user_obj.is_active:
+            messages.error(request, "Your account is still pending admin approval.")
+            return redirect('login')
+
         user = authenticate(request, username=username, password=password)
 
         if user:
             login(request, user)
 
-            # 👇 Redirect admin user to the admin dashboard
             if user.is_superuser or user.is_staff or user.username.lower() == 'admin':
                 return redirect('admin_dashboard')
 
-            # Normal members go to member dashboard
             return redirect('dashboard')
         else:
             messages.error(request, "Invalid credentials.")
+
     return render(request, 'members/login.html')
 
 

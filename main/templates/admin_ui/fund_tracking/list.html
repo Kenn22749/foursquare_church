@@ -2,7 +2,31 @@
 
 {% block content %}
 <h2 class="mb-3">Fund Tracking</h2>
-<p class="text-muted">List of all GCash donations and church fund records.</p>
+<p class="text-muted">List of all church fund records.</p>
+
+<div class="mb-3">
+
+  <a href="?type=All"
+     class="btn btn-sm {% if selected_type == 'All' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+     All
+  </a>
+
+  <a href="?type=Donation"
+     class="btn btn-sm {% if selected_type == 'Donation' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+     Donation
+  </a>
+
+  <a href="?type=Offering"
+     class="btn btn-sm {% if selected_type == 'Offering' %}btn-success{% else %}btn-outline-success{% endif %}">
+     Offering
+  </a>
+
+</div>
+
+<div class="alert alert-info">
+  <strong>Total {{ selected_type }}:</strong>
+  ₱{{ total_amount }}
+</div>
 
 <table class="table table-bordered table-hover bg-white">
   <thead class="table-light">
@@ -10,7 +34,6 @@
       <th>Member</th>
       <th>Fund Type</th>
       <th>Amount</th>
-      <th>GCash Reference</th>
       <th>Receipt</th>
       <th>Status</th>
       <th>Date</th>
@@ -24,7 +47,6 @@
       <td>{{ d.member.username }}</td>
       <td>{{ d.fund_type }}</td>
       <td>₱{{ d.amount }}</td>
-      <td>{{ d.gcash_reference|default:"N/A" }}</td>
 
       <td>
         {% if d.receipt_image %}
@@ -33,17 +55,15 @@
              View
           </a>
         {% else %}
-          <span class="text-muted">No receipt</span>
+          No receipt
         {% endif %}
       </td>
 
       <td>
         {% if d.status == "Verified" %}
           <span class="badge bg-success">Verified</span>
-
         {% elif d.status == "Rejected" %}
           <span class="badge bg-danger">Rejected</span>
-
         {% else %}
           <span class="badge bg-warning text-dark">Pending</span>
         {% endif %}
@@ -55,38 +75,32 @@
 
         {% if d.status == "Pending" %}
 
-          <a href="{% url 'admin-fundtracking-verify' d.id %}"
-             class="btn btn-sm btn-success mb-1">
-             Verify
+          <a href="{% url 'admin-fundtracking-verify' d.id %}" class="btn btn-sm btn-success mb-1">
+            Verify
           </a>
 
-          <a href="{% url 'admin-fundtracking-reject' d.id %}"
-             class="btn btn-sm btn-danger mb-1">
-             Reject
+          <a href="{% url 'admin-fundtracking-reject' d.id %}" class="btn btn-sm btn-danger mb-1">
+            Reject
           </a>
 
         {% elif d.status == "Verified" %}
 
-          <a href="{% url 'admin-fundtracking-reject' d.id %}"
-             class="btn btn-sm btn-danger mb-1">
-             Change to Reject
+          <a href="{% url 'admin-fundtracking-reject' d.id %}" class="btn btn-sm btn-danger mb-1">
+            Change to Reject
           </a>
 
-          <a href="{% url 'admin-fundtracking-reset' d.id %}"
-             class="btn btn-sm btn-secondary mb-1">
-             Reset
+          <a href="{% url 'admin-fundtracking-reset' d.id %}" class="btn btn-sm btn-secondary mb-1">
+            Reset
           </a>
 
         {% elif d.status == "Rejected" %}
 
-          <a href="{% url 'admin-fundtracking-verify' d.id %}"
-             class="btn btn-sm btn-success mb-1">
-             Change to Verify
+          <a href="{% url 'admin-fundtracking-verify' d.id %}" class="btn btn-sm btn-success mb-1">
+            Change to Verify
           </a>
 
-          <a href="{% url 'admin-fundtracking-reset' d.id %}"
-             class="btn btn-sm btn-secondary mb-1">
-             Reset
+          <a href="{% url 'admin-fundtracking-reset' d.id %}" class="btn btn-sm btn-secondary mb-1">
+            Reset
           </a>
 
         {% endif %}
@@ -96,11 +110,12 @@
 
   {% empty %}
     <tr>
-      <td colspan="8" class="text-center text-muted py-4">
+      <td colspan="7" class="text-center text-muted py-4">
         No fund records yet
       </td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
+
 {% endblock %}

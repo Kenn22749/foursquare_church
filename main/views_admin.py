@@ -7,6 +7,7 @@ from .models import Ministry
 from django.utils import timezone
 from .models import MemberProfile
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
 
 def admin_only(user):
@@ -60,6 +61,16 @@ def admin_memberprofile_delete(request, pk):
         messages.success(request, "Member profile deleted successfully.")
     else:
         messages.info(request, "Member profile does not exist.")
+    return redirect('admin-memberprofile-list')
+
+@user_passes_test(admin_only)
+def admin_memberprofile_approve(request, pk):
+    profile = get_object_or_404(MemberProfile, pk=pk)
+
+    profile.user.is_active = True
+    profile.user.save()
+
+    messages.success(request, "Member account approved successfully.")
     return redirect('admin-memberprofile-list')
 
 
@@ -249,10 +260,24 @@ from .models import Donation
 
 @user_passes_test(admin_only)
 def admin_fundtracking_list(request):
+    fund_type = request.GET.get('type', 'All')
+
     donations = Donation.objects.select_related('member').order_by('-created_at')
 
+    if fund_type == 'Donation':
+        donations = donations.filter(fund_type='Donation')
+
+    elif fund_type == 'Offering':
+        donations = donations.filter(fund_type='Offering')
+
+    total_amount = donations.aggregate(
+        total=Sum('amount')
+    )['total'] or 0
+
     return render(request, 'admin_ui/fund_tracking/list.html', {
-        'donations': donations
+        'donations': donations,
+        'selected_type': fund_type,
+        'total_amount': total_amount,
     })
 
 

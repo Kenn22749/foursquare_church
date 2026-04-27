@@ -4,20 +4,26 @@ from django.contrib.auth.models import User
 from .models import MemberProfile
 
 class UserRegisterForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password'}))
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Password'})
+    )
+
+    email = forms.EmailField(
+        required=False,
+        widget=forms.EmailInput(attrs={'placeholder': 'Email address (optional)'})
+    )
 
     class Meta:
         model = User
         fields = ['username', 'email', 'password']
         widgets = {
             'username': forms.TextInput(attrs={'placeholder': 'Username'}),
-            'email': forms.EmailInput(attrs={'placeholder': 'Email address'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.help_text = None  # removes the "Required. 150 characters..." message
+            field.help_text = None
 
 class MemberProfileForm(forms.ModelForm):
     class Meta:
@@ -43,16 +49,12 @@ class MemberProfileForm(forms.ModelForm):
 class DonationForm(forms.ModelForm):
     class Meta:
         model = Donation
-        fields = ['fund_type', 'amount', 'gcash_reference', 'receipt_image']
+        fields = ['fund_type', 'amount', 'receipt_image']
         widgets = {
             'fund_type': forms.Select(attrs={'class': 'form-control'}),
             'amount': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter amount'
-            }),
-            'gcash_reference': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter GCash reference number'
             }),
             'receipt_image': forms.FileInput(attrs={'class': 'form-control'}),
         }

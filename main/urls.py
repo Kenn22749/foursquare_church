@@ -60,4 +60,5 @@ path('admin_ui/members/<int:pk>/delete/', views_admin.admin_memberprofile_delete
 path('admin_ui/fund-tracking/', views_admin.admin_fundtracking_list, name='admin-fundtracking-list'),
 path('admin_ui/fund-tracking/<int:pk>/verify/', views_admin.admin_fundtracking_verify, name='admin-fundtracking-verify'),
 path('admin_ui/fund-tracking/<int:pk>/reject/', views_admin.admin_fundtracking_reject, name='admin-fundtracking-reject'),
+path('admin_ui/fund-tracking/reset/<int:pk>/', views_admin.admin_fundtracking_reset, name='admin-fundtracking-reset'),
 ]

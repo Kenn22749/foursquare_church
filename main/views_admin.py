@@ -282,3 +282,16 @@ def admin_fundtracking_reject(request, pk):
 
     messages.success(request, "Transaction rejected.")
     return redirect('admin-fundtracking-list')
+
+@user_passes_test(admin_only)
+def admin_fundtracking_reset(request, pk):
+    donation = get_object_or_404(Donation, pk=pk)
+
+    donation.status = "Pending"
+    donation.verified = False
+    donation.verified_by = None
+    donation.verified_at = None
+    donation.save()
+
+    messages.success(request, "Donation status reset to Pending.")
+    return redirect('admin-fundtracking-list')

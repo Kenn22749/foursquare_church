@@ -2,7 +2,7 @@
 
 {% block content %}
 <h2 class="mb-3">Fund Tracking</h2>
-<p class="text-muted">List of all GCash donations, and other church funds.</p>
+<p class="text-muted">List of all GCash donations and church fund records.</p>
 
 <table class="table table-bordered table-hover bg-white">
   <thead class="table-light">
@@ -14,7 +14,7 @@
       <th>Receipt</th>
       <th>Status</th>
       <th>Date</th>
-      <th>Action</th>
+      <th width="240">Action</th>
     </tr>
   </thead>
 
@@ -28,7 +28,10 @@
 
       <td>
         {% if d.receipt_image %}
-          <a href="{{ d.receipt_image.url }}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+          <a href="{{ d.receipt_image.url }}" target="_blank"
+             class="btn btn-sm btn-outline-primary">
+             View
+          </a>
         {% else %}
           <span class="text-muted">No receipt</span>
         {% endif %}
@@ -37,8 +40,10 @@
       <td>
         {% if d.status == "Verified" %}
           <span class="badge bg-success">Verified</span>
+
         {% elif d.status == "Rejected" %}
           <span class="badge bg-danger">Rejected</span>
+
         {% else %}
           <span class="badge bg-warning text-dark">Pending</span>
         {% endif %}
@@ -47,17 +52,53 @@
       <td>{{ d.created_at|date:"M. d, Y, g:i a" }}</td>
 
       <td>
+
         {% if d.status == "Pending" %}
-          <a href="{% url 'admin-fundtracking-verify' d.id %}" class="btn btn-sm btn-success">Verify</a>
-          <a href="{% url 'admin-fundtracking-reject' d.id %}" class="btn btn-sm btn-danger">Reject</a>
-        {% else %}
-          <span class="text-muted">Done</span>
+
+          <a href="{% url 'admin-fundtracking-verify' d.id %}"
+             class="btn btn-sm btn-success mb-1">
+             Verify
+          </a>
+
+          <a href="{% url 'admin-fundtracking-reject' d.id %}"
+             class="btn btn-sm btn-danger mb-1">
+             Reject
+          </a>
+
+        {% elif d.status == "Verified" %}
+
+          <a href="{% url 'admin-fundtracking-reject' d.id %}"
+             class="btn btn-sm btn-danger mb-1">
+             Change to Reject
+          </a>
+
+          <a href="{% url 'admin-fundtracking-reset' d.id %}"
+             class="btn btn-sm btn-secondary mb-1">
+             Reset
+          </a>
+
+        {% elif d.status == "Rejected" %}
+
+          <a href="{% url 'admin-fundtracking-verify' d.id %}"
+             class="btn btn-sm btn-success mb-1">
+             Change to Verify
+          </a>
+
+          <a href="{% url 'admin-fundtracking-reset' d.id %}"
+             class="btn btn-sm btn-secondary mb-1">
+             Reset
+          </a>
+
         {% endif %}
+
       </td>
     </tr>
+
   {% empty %}
     <tr>
-      <td colspan="8" class="text-center text-muted py-4">No fund records yet</td>
+      <td colspan="8" class="text-center text-muted py-4">
+        No fund records yet
+      </td>
     </tr>
   {% endfor %}
   </tbody>

@@ -2,80 +2,109 @@
 {% block content %}
 
 <style>
-  .badge-approved {
-    background-color: #28a745;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
+.badge-approved{
+  background:#28a745;
+  color:#fff;
+  padding:5px 12px;
+  border-radius:12px;
+  font-size:.85rem;
+}
 
-  .badge-pending {
-    background-color: #ffc107;
-    color: #333;
-    padding: 5px 12px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
+.badge-pending{
+  background:#ffc107;
+  color:#333;
+  padding:5px 12px;
+  border-radius:12px;
+  font-size:.85rem;
+}
 
-  .badge-rejected {
-    background-color: #dc3545;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
+.badge-rejected{
+  background:#dc3545;
+  color:#fff;
+  padding:5px 12px;
+  border-radius:12px;
+  font-size:.85rem;
+}
 </style>
 
-<h3>My Fund Records</h3>
+<h3>My Fund Tracking</h3>
 
-<table class="table table-bordered table-hover">
+<table class="table table-bordered table-hover bg-white">
   <thead class="table-light">
     <tr>
       <th>Fund Type</th>
       <th>Amount</th>
-      <th>Method</th>
-      <th>GCash Reference</th>
+      <th>GCash Reference no.</th>
       <th>Receipt</th>
+      <th>Submitted</th>
       <th>Status</th>
-      <th>Date</th>
     </tr>
   </thead>
 
   <tbody>
   {% for d in donations %}
     <tr>
+
       <td>{{ d.fund_type }}</td>
+
       <td>₱{{ d.amount }}</td>
-      <td>{{ d.method }}</td>
+
       <td>{{ d.gcash_reference|default:"N/A" }}</td>
 
       <td>
         {% if d.receipt_image %}
-          <a href="{{ d.receipt_image.url }}" target="_blank" class="text-primary">View</a>
+          <a href="{{ d.receipt_image.url }}" target="_blank">View</a>
         {% else %}
-          <span class="text-muted">N/A</span>
+          N/A
         {% endif %}
       </td>
 
       <td>
-        {% if d.status == "Verified" %}
-          <span class="badge-approved">✓ Verified</span>
-        {% elif d.status == "Rejected" %}
-          <span class="badge-rejected">✕ Rejected</span>
-        {% else %}
-          <span class="badge-pending">⏳ Pending</span>
-        {% endif %}
+        {{ d.created_at|date:"M. d, Y" }}<br>
+        <small class="text-muted">
+          {{ d.created_at|date:"g:i A" }}
+        </small>
       </td>
 
-      <td>{{ d.created_at|date:"M. d, Y, g:i a" }}</td>
+      <td>
+
+        {% if d.status == "Verified" %}
+
+          <span class="badge-approved">Approved</span><br>
+
+          <small class="text-muted">
+            {{ d.verified_at|date:"M. d, Y" }}<br>
+            {{ d.verified_at|date:"g:i A" }}
+          </small>
+
+        {% elif d.status == "Rejected" %}
+
+          <span class="badge-rejected">Rejected</span><br>
+
+          <small class="text-muted">
+            {{ d.verified_at|date:"M. d, Y" }}<br>
+            {{ d.verified_at|date:"g:i A" }}
+          </small>
+
+        {% else %}
+
+          <span class="badge-pending">Pending</span><br>
+
+          <small class="text-muted">
+            Waiting for admin review
+          </small>
+
+        {% endif %}
+
+      </td>
+
     </tr>
+
   {% empty %}
     <tr>
-      <td colspan="7" class="text-center text-muted py-4">No fund records yet</td>
+      <td colspan="6" class="text-center text-muted py-4">
+        No fund records yet
+      </td>
     </tr>
   {% endfor %}
   </tbody>

@@ -12,11 +12,16 @@ def donate(request):
         if form.is_valid():
             donation = form.save(commit=False)
             donation.member = request.user
+            donation.method = 'GCash'
+            donation.status = 'Pending'
+            donation.verified = False
             donation.save()
-            messages.success(request, "Donation recorded. Admin will verify receipt.")
+
+            messages.success(request, "Your GCash donation was submitted. Please wait for admin verification.")
             return redirect('history')
     else:
         form = DonationForm()
+
     return render(request, 'donations/donate.html', {'form': form})
 
 @login_required

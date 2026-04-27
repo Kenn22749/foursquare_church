@@ -1,43 +1,43 @@
 {% extends 'members/base.html' %}
 {% load static %}
-{% block title %}Make a Donation{% endblock %}
+{% block title %}Submit GCash Fund{% endblock %}
 
 {% block content %}
 <div class="form-container">
-  <h2 class="text-center text-success fw-bold mb-2">Make a Donation</h2>
-  <p class="text-center text-muted mb-4">Support the ministry and community projects.</p>
+  <h2 class="text-center text-success fw-bold mb-2">Submit GCash Fund</h2>
+  <p class="text-center text-muted mb-4">For donations, and other church funds.</p>
 
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
+
+    <div class="mb-3">
+      {{ form.fund_type.label_tag }}
+      {{ form.fund_type }}
+    </div>
+
     <div class="mb-3">
       {{ form.amount.label_tag }}
       {{ form.amount }}
     </div>
+
     <div class="mb-3">
-      {{ form.method.label_tag }}
-      {{ form.method }}
+      {{ form.gcash_reference.label_tag }}
+      {{ form.gcash_reference }}
+      <small class="text-muted">Enter the reference number from your GCash receipt.</small>
     </div>
 
-    <!-- ✅ Required receipt image field -->
     <div class="mb-3">
       {{ form.receipt_image.label_tag }}
-      <input 
-          type="file" 
-          name="receipt_image" 
-          id="id_receipt_image" 
-          accept="image/*"
-          required
-          class="form-control" 
-      >
+      {{ form.receipt_image }}
       <small class="text-muted d-block mt-1">
-          Please upload a clear photo of your payment receipt (required).
+        Please upload a clear photo of your GCash receipt.
       </small>
       {% if form.receipt_image.errors %}
         <div class="text-danger small mt-1">{{ form.receipt_image.errors }}</div>
       {% endif %}
     </div>
 
-    <button type="submit" class="btn btn-success w-100">Submit Donation</button>
+    <button type="submit" class="btn btn-success w-100">Submit Fund Record</button>
   </form>
 </div>
 {% endblock %}

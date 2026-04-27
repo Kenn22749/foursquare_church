@@ -57,5 +57,7 @@ path('admin_ui/members/', views_admin.admin_memberprofile_list, name='admin-memb
 path('admin_ui/members/<int:pk>/edit/', views_admin.admin_memberprofile_edit, name='admin-memberprofile-edit'),
 path('admin_ui/members/<int:pk>/delete/', views_admin.admin_memberprofile_delete, name='admin-memberprofile-delete'),
 
-
+path('admin_ui/fund-tracking/', views_admin.admin_fundtracking_list, name='admin-fundtracking-list'),
+path('admin_ui/fund-tracking/<int:pk>/verify/', views_admin.admin_fundtracking_verify, name='admin-fundtracking-verify'),
+path('admin_ui/fund-tracking/<int:pk>/reject/', views_admin.admin_fundtracking_reject, name='admin-fundtracking-reject'),
 ]

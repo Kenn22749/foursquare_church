@@ -239,3 +239,46 @@ def admin_announcement_delete(request, pk):
 @user_passes_test(lambda u: u.is_superuser or u.is_staff)
 def admin_dashboard(request):
     return render(request, 'admin_ui/dashboard.html')
+
+
+# -----------------------
+#   FUND TRACKING
+# -----------------------
+
+from .models import Donation
+
+@user_passes_test(admin_only)
+def admin_fundtracking_list(request):
+    donations = Donation.objects.select_related('member').order_by('-created_at')
+
+    return render(request, 'admin_ui/fund_tracking/list.html', {
+        'donations': donations
+    })
+
+
+@user_passes_test(admin_only)
+def admin_fundtracking_verify(request, pk):
+    donation = get_object_or_404(Donation, pk=pk)
+
+    donation.status = 'Verified'
+    donation.verified = True
+    donation.verified_by = request.user
+    donation.verified_at = timezone.now()
+    donation.save()
+
+    messages.success(request, "Transaction verified successfully.")
+    return redirect('admin-fundtracking-list')
+
+
+@user_passes_test(admin_only)
+def admin_fundtracking_reject(request, pk):
+    donation = get_object_or_404(Donation, pk=pk)
+
+    donation.status = 'Rejected'
+    donation.verified = False
+    donation.verified_by = request.user
+    donation.verified_at = timezone.now()
+    donation.save()
+
+    messages.success(request, "Transaction rejected.")
+    return redirect('admin-fundtracking-list')

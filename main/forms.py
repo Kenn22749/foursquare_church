@@ -43,23 +43,35 @@ class MemberProfileForm(forms.ModelForm):
 class DonationForm(forms.ModelForm):
     class Meta:
         model = Donation
-        fields = ['amount', 'method', 'receipt_image']
+        fields = ['fund_type', 'amount', 'gcash_reference', 'receipt_image']
+        widgets = {
+            'fund_type': forms.Select(attrs={'class': 'form-control'}),
+            'amount': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter amount'
+            }),
+            'gcash_reference': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter GCash reference number'
+            }),
+            'receipt_image': forms.FileInput(attrs={'class': 'form-control'}),
+        }
 
-    # 👇 Add this here (after Meta)
     def __init__(self, *args, **kwargs):
         super(DonationForm, self).__init__(*args, **kwargs)
-        # Make the receipt image required
         self.fields['receipt_image'].required = True
 
     def clean_receipt_image(self):
         img = self.cleaned_data.get('receipt_image')
+
         if img:
-            if img.size > 10 * 1024 * 1024:  # 10MB limit
-                raise forms.ValidationError("Receipt too large (max 10MB).")
+            if img.size > 10 * 1024 * 1024:
+                raise forms.ValidationError("Receipt too large. Maximum size is 10MB.")
+
             ext = img.name.split('.')[-1].lower()
             if ext not in ['jpg', 'jpeg', 'png']:
-                raise forms.ValidationError("Unsupported file type.")
+                raise forms.ValidationError("Only JPG, JPEG, and PNG files are allowed.")
         else:
-            # 👇 This ensures backend also enforces the required rule
-            raise forms.ValidationError("Please upload a photo of your payment receipt.")
+            raise forms.ValidationError("Please upload your GCash payment receipt.")
+
         return img

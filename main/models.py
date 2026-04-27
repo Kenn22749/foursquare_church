@@ -40,18 +40,40 @@ class Announcement(models.Model):
         return self.title
 
 class Donation(models.Model):
-    METHOD_CHOICES = [('Cash','Cash'), ('GCash','GCash')]
+    FUND_TYPE_CHOICES = [
+        ('Donation', 'Donation'),
+        ('Others', 'Others'),
+    ]
+
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Verified', 'Verified'),
+        ('Rejected', 'Rejected'),
+    ]
+
     member = models.ForeignKey(User, on_delete=models.CASCADE)
+    fund_type = models.CharField(max_length=50, choices=FUND_TYPE_CHOICES, default='Donation')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    method = models.CharField(max_length=10, choices=METHOD_CHOICES)
+
+    method = models.CharField(max_length=10, default='GCash')
+    gcash_reference = models.CharField(max_length=100, unique=True)
+
     receipt_image = models.ImageField(upload_to='donation_receipts/', null=True, blank=True)
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     verified = models.BooleanField(default=False)
-    verified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='verified_donations')
+    verified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='verified_donations'
+    )
     verified_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.member.username} - {self.amount} ({self.method})"
+        return f"{self.member.username} - {self.fund_type} - ₱{self.amount}"
     
 class Event(models.Model):
     title = models.CharField(max_length=200)

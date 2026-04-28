@@ -3,9 +3,35 @@
 {% block title %}Submit GCash Donations{% endblock %}
 
 {% block content %}
+
+<style>
+.btn-donation{
+    background: linear-gradient(135deg, #7c3aed, #5b21b6);
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 10px;
+    transition: 0.25s ease;
+}
+
+.btn-donation:hover{
+    background: linear-gradient(135deg, #6d28d9, #4c1d95);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(92, 33, 182, 0.25);
+}
+
+.title-purple{
+    color:#5b21b6;
+}
+</style>
+
 <div class="form-container">
-  <h2 class="text-center text-success fw-bold mb-2">Submit GCash Donation</h2>
-  <p class="text-center text-muted mb-4">Submit your donations through GCash.</p>
+  <h2 class="text-center title-purple fw-bold mb-2">Submit GCash Donation</h2>
+  <p class="text-center text-muted mb-4">
+    Submit your donations through GCash.
+  </p>
 
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
@@ -18,6 +44,7 @@
     <div class="mb-3">
       {{ form.receipt_image.label_tag }}
       {{ form.receipt_image }}
+
       <small class="text-muted d-block mt-1">
         Please upload a clear photo of your GCash receipt.
       </small>
@@ -29,9 +56,10 @@
       {% endif %}
     </div>
 
-    <button type="submit" class="btn btn-success w-100">
+    <button type="submit" class="btn btn-donation w-100">
       Submit
     </button>
   </form>
 </div>
+
 {% endblock %}

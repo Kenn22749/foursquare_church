@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="page-title">🤝 Ministries</h2>
+    <h2 class="page-title">🤝 Activities</h2>
     <a href="{% url 'admin-ministry-add' %}" class="btn btn-primary">+ Add New</a>
   </div>
 
@@ -38,11 +38,11 @@
           <td>
             <a href="{% url 'admin-ministry-edit' item.id %}" class="btn btn-sm btn-warning text-white">Edit</a>
             <a href="{% url 'admin-ministry-delete' item.id %}" class="btn btn-sm btn-danger"
-               onclick="return confirm('Delete this ministry?');">Delete</a>
+               onclick="return confirm('Delete this activities?');">Delete</a>
           </td>
         </tr>
         {% empty %}
-        <tr><td colspan="5" class="text-center text-muted">No ministries found.</td></tr>
+        <tr><td colspan="5" class="text-center text-muted">No activities found.</td></tr>
         {% endfor %}
       </tbody>
     </table>

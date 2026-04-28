@@ -30,7 +30,7 @@ def donate(request):
 def history(request):
     donations_list = Donation.objects.filter(member=request.user).order_by('-created_at')
 
-    paginator = Paginator(donations_list, 5)
+    paginator = Paginator(donations_list, 3)
     page_number = request.GET.get('page')
     donations = paginator.get_page(page_number)
 

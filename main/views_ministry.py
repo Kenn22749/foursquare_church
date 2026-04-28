@@ -20,10 +20,10 @@ def list_ministries(request):
 def join_ministry(request, pk):
     ministry = get_object_or_404(Ministry, pk=pk)
     if VolunteerAssignment.objects.filter(ministry=ministry, member=request.user).exists():
-        messages.info(request, "You are already a volunteer for this ministry.")
+        messages.info(request, "You are already joined in this activity.")
     else:
         VolunteerAssignment.objects.create(ministry=ministry, member=request.user)
-        messages.success(request, "You are now signed up as a volunteer.")
+        messages.success(request, "You successfully joined this activity.")
     return redirect('ministries-list')
 
 

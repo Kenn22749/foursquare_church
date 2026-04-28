@@ -7,6 +7,7 @@ from .models import Ministry
 from django.utils import timezone
 from .models import MemberProfile
 from django.contrib.auth.models import User
+from decimal import Decimal, InvalidOperation
 from django.db.models import Sum
 
 
@@ -101,7 +102,7 @@ def admin_ministry_add(request):
             is_active=is_active
         )
 
-        messages.success(request, "Ministry created successfully.")
+        messages.success(request, "Activity created successfully.")
         return redirect('admin-ministry-list')
 
     return render(request, 'admin_ui/ministries/add.html')
@@ -118,7 +119,7 @@ def admin_ministry_edit(request, pk):
         ministry.is_active = bool(request.POST.get('is_active'))
         ministry.save()
 
-        messages.success(request, "Ministry updated successfully.")
+        messages.success(request, "Activity updated successfully.")
         return redirect('admin-ministry-list')
 
     return render(request, 'admin_ui/ministries/edit.html', {
@@ -131,7 +132,7 @@ def admin_ministry_delete(request, pk):
     ministry = get_object_or_404(Ministry, pk=pk)
 
     ministry.delete()
-    messages.success(request, "Ministry deleted successfully.")
+    messages.success(request, "Activity deleted successfully.")
     return redirect('admin-ministry-list')
 
 
@@ -311,3 +312,77 @@ def admin_fundtracking_reset(request, pk):
 
     messages.success(request, "Donation status reset to Pending.")
     return redirect('admin-fundtracking-list')
+
+
+def admin_fundtracking_add(request):
+    members = User.objects.all().order_by("username")
+
+    if request.method == "POST":
+        member_id = request.POST.get("member")
+        amount_input = request.POST.get("amount", "").strip()
+        method = request.POST.get("method")
+
+        # Validate amount
+        if not amount_input:
+            messages.error(request, "Amount is required.")
+            return render(request, "admin_ui/fund_tracking/add.html", {
+                "members": members
+            })
+
+        try:
+            amount = Decimal(amount_input)
+        except InvalidOperation:
+            messages.error(request, "Invalid amount.")
+            return render(request, "admin_ui/fund_tracking/add.html", {
+                "members": members
+            })
+
+        Donation.objects.create(
+            member_id=member_id,
+            fund_type="Donations",
+            amount=amount,
+            method=method,
+            status="Verified" if method == "Cash" else "Pending",
+            verified=True if method == "Cash" else False
+        )
+
+        messages.success(request, "Transaction added successfully.")
+        return redirect("admin-fundtracking-list")
+
+    return render(request, "admin_ui/fund_tracking/add.html", {
+        "members": members
+    })
+
+
+@user_passes_test(admin_only)
+def admin_fundtracking_edit(request, pk):
+    donation = get_object_or_404(Donation, pk=pk)
+    members = User.objects.all().order_by('username')
+
+    if request.method == "POST":
+        donation.member_id = request.POST.get("member")
+        donation.amount = request.POST.get("amount")
+        donation.method = request.POST.get("method")
+
+        # REQUIRED FIX
+        if not donation.status:
+            donation.status = "Verified"
+
+        # Optional smart logic
+        if donation.method == "Cash":
+            donation.status = "Verified"
+            donation.verified = True
+            donation.verified_at = timezone.now()
+        else:
+            # GCash keep current status unless empty
+            donation.status = donation.status or "Pending"
+
+        donation.save()
+
+        messages.success(request, "Transaction updated successfully.")
+        return redirect("admin-fundtracking-list")
+
+    return render(request, "admin_ui/fund_tracking/edit.html", {
+        "donation": donation,
+        "members": members
+    })

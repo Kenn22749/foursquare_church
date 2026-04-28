@@ -107,7 +107,7 @@
 </style>
 
 <div class="page-wrap">
-  <h2 class="page-title">Ministries</h2>
+  <h2 class="page-title">Activities</h2>
 
   <div class="card-grid">
     {% for m in ministries %}
@@ -123,14 +123,14 @@
           </div>
 
           {% if user.is_authenticated %}
-            <a href="{% url 'ministries-join' m.pk %}" class="btn-main">Join Ministry</a>
+            <a href="{% url 'ministries-join' m.pk %}" class="btn-main">Join Activities</a>
           {% else %}
             <a href="{% url 'login' %}" class="btn-main">Login to Join</a>
           {% endif %}
         </div>
       </div>
     {% empty %}
-      <p>No ministries yet.</p>
+      <p>No activities yet.</p>
     {% endfor %}
   </div>
 

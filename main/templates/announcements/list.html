@@ -1,113 +1,129 @@
 {% extends 'members/base.html' %}
 {% block title %}Announcements{% endblock %}
 {% block content %}
+
 <style>
-  /* 🌤️ Wrapper */
-  .announcements-wrapper {
-    padding: 40px 60px;
-  }
+.page-wrap { padding: 35px 20px; }
+.page-title { color: #1e3a5f; font-weight: 800; margin-bottom: 30px; }
 
-  /* 🌤️ Frosted glass card */
-  .announcement-card {
-    background: rgba(240, 240, 255, 0.7);
-    border-radius: 18px;
-    padding: 25px 30px;
-    margin-bottom: 20px;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
+.announcement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 700px));
+  justify-content: center;
+  gap: 28px;
+}
 
-  .announcement-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-  }
+.announcement-card {
+  background: #fff;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.14);
+  transition: 0.25s ease;
+}
 
-  /* Headings and text */
-  .announcement-card h5 {
-    color: #2c5282 !important;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
+.announcement-card:hover { transform: translateY(-5px); }
 
-  .announcement-card small {
-    color: #555;
-    font-size: 0.9rem;
-  }
+.card-top {
+  height: 82px;
+  background:
+    radial-gradient(circle at 85% 50%, rgba(244,196,48,0.55), rgba(0,0,0,0) 70%),
+    radial-gradient(circle at 20% 40%, rgba(31,79,216,0.45), rgba(106,31,191,0.32), rgba(0,0,0,0) 80%),
+    #eef2ff;
+  position: relative;
+}
 
-  .announcement-card p {
-    color: #222;
-    margin-top: 10px;
-  }
+.card-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #fff;
+  position: absolute;
+  left: 50%;
+  bottom: -32px;
+  transform: translateX(-50%);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
 
-  /* Page title */
-  .page-title {
-    text-align: left;
-    font-weight: 700;
-    margin-bottom: 30px;
-    color: #2c5282 !important;
-  }
+.card-body-custom {
+  padding: 50px 30px 28px;
+  text-align: center;
+}
 
-  /* Pagination */
-  .pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
-    gap: 10px;
-  }
+.card-body-custom h5 {
+  color: #1e3a5f;
+  font-weight: 800;
+}
 
-  .pagination a,
-  .pagination span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    border: 2px solid #2c5282;
-    color: #2c5282;
-    background: transparent;
-  }
+.card-body-custom small {
+  color: #6a1fbf;
+  font-weight: 700;
+}
 
-  .pagination a:hover {
-    background: #2c5282;
-    color: white;
-  }
+.card-body-custom p {
+  margin-top: 14px;
+  color: #444;
+  line-height: 1.6;
+}
 
-  .pagination .active {
-    background: #2c5282;
-    color: white;
-    border-color: #2c5282;
-  }
+.pagination {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
-  .pagination span:not(.active):not(:hover) {
-    opacity: 0.6;
-    cursor: default;
-  }
+.pagination a,
+.pagination span {
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: 1px solid #d8ddec;
+  background: #fff;
+  color: #1e3a5f;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  width: auto;
+  height: auto;
+}
+
+.pagination .active,
+.pagination a:hover {
+  background: #2c5282;
+  color: #fff;
+}
 </style>
 
-<div class="announcements-wrapper">
-  <h3 class="page-title">Announcements</h3>
+<div class="page-wrap">
+  <h2 class="page-title">Announcements</h2>
 
-  {% for a in announcements %}
-    <div class="announcement-card">
-      <h5>{{ a.title }}</h5>
-      <small>Posted on {{ a.publish_date|date:"F d, Y" }}</small>
-      <p>{{ a.content }}</p>
-    </div>
-  {% empty %}
-    <p class="text-center">No announcements.</p>
-  {% endfor %}
+  <div class="announcement-grid">
+    {% for a in announcements %}
+      <div class="announcement-card">
+        <div class="card-top">
+          <div class="card-icon">📢</div>
+        </div>
 
-  <!-- Pagination -->
+        <div class="card-body-custom">
+          <h5>{{ a.title }}</h5>
+          <small>Posted on {{ a.publish_date|date:"F d, Y" }}</small>
+          <p>{{ a.content }}</p>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center">No announcements.</p>
+    {% endfor %}
+  </div>
+
   <div class="pagination">
     {% if announcements.has_previous %}
-      <a href="?page={{ announcements.previous_page_number }}">&lt;</a>
+      <a href="?page={{ announcements.previous_page_number }}">← Previous</a>
     {% else %}
-      <span>&lt;</span>
+      <span>← Previous</span>
     {% endif %}
 
     {% for num in announcements.paginator.page_range %}
@@ -119,10 +135,11 @@
     {% endfor %}
 
     {% if announcements.has_next %}
-      <a href="?page={{ announcements.next_page_number }}">&gt;</a>
+      <a href="?page={{ announcements.next_page_number }}">Next →</a>
     {% else %}
-      <span>&gt;</span>
+      <span>Next →</span>
     {% endif %}
   </div>
 </div>
+
 {% endblock %}

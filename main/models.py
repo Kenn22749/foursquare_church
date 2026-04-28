@@ -41,8 +41,7 @@ class Announcement(models.Model):
 
 class Donation(models.Model):
     FUND_TYPE_CHOICES = [
-    ('Donation', 'Donation'),
-    ('Offering', 'Offering'),
+    ('Donations', 'Donations'),
     ]
 
     STATUS_CHOICES = [
@@ -52,11 +51,10 @@ class Donation(models.Model):
     ]
 
     member = models.ForeignKey(User, on_delete=models.CASCADE)
-    fund_type = models.CharField(max_length=50, choices=FUND_TYPE_CHOICES, default='Donation')
+    fund_type = models.CharField(max_length=50, choices=FUND_TYPE_CHOICES, default='Donations')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     method = models.CharField(max_length=10, default='GCash')
-
     receipt_image = models.ImageField(upload_to='donation_receipts/', null=True, blank=True)
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')

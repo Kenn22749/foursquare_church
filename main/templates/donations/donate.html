@@ -1,19 +1,14 @@
 {% extends 'members/base.html' %}
 {% load static %}
-{% block title %}Submit GCash Fund{% endblock %}
+{% block title %}Submit GCash Donations{% endblock %}
 
 {% block content %}
 <div class="form-container">
-  <h2 class="text-center text-success fw-bold mb-2">Submit GCash Fund</h2>
-  <p class="text-center text-muted mb-4">For donations and offerings.</p>
+  <h2 class="text-center text-success fw-bold mb-2">Submit GCash Donation</h2>
+  <p class="text-center text-muted mb-4">Submit your donations through GCash.</p>
 
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-
-    <div class="mb-3">
-      {{ form.fund_type.label_tag }}
-      {{ form.fund_type }}
-    </div>
 
     <div class="mb-3">
       {{ form.amount.label_tag }}

@@ -1,110 +1,251 @@
 {% extends 'members/base.html' %}
+{% block title %}My Fund Tracking{% endblock %}
 {% block content %}
 
 <style>
-.badge-approved{
-  background:#28a745;
-  color:#fff;
-  padding:5px 12px;
-  border-radius:12px;
-  font-size:.85rem;
+.page-wrap {
+  padding: 35px 20px;
 }
 
-.badge-pending{
-  background:#ffc107;
-  color:#333;
-  padding:5px 12px;
-  border-radius:12px;
-  font-size:.85rem;
+.page-title {
+  color: #1e3a5f;
+  font-weight: 800;
+  margin-bottom: 30px;
 }
 
-.badge-rejected{
-  background:#dc3545;
-  color:#fff;
-  padding:5px 12px;
-  border-radius:12px;
-  font-size:.85rem;
+/* Grid for cards */
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 360px));
+  justify-content: center;
+  gap: 28px;
+}
+
+/* Card */
+.history-card {
+  background: #fff;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.14);
+  transition: 0.25s ease;
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-card:hover {
+  transform: translateY(-6px);
+}
+
+/* Header matches site background softly */
+.card-top {
+  height: 82px;
+  background:
+    radial-gradient(circle at 85% 50%, rgba(244,196,48,0.55), rgba(0,0,0,0) 70%),
+    radial-gradient(circle at 20% 40%, rgba(31,79,216,0.45), rgba(106,31,191,0.32), rgba(0,0,0,0) 80%),
+    #eef2ff;
+  position: relative;
+}
+
+.card-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #fff;
+  position: absolute;
+  left: 50%;
+  bottom: -32px;
+  transform: translateX(-50%);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+
+.card-body-custom {
+  padding: 48px 24px 24px;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-body-custom h5 {
+  color: #1e3a5f;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.amount-text {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #2c5282;
+  margin-bottom: 10px;
+}
+
+.small-text {
+  color: #666;
+  font-size: 0.93rem;
+  line-height: 1.5;
+}
+
+/* Buttons */
+.btn-main {
+  display: inline-block;
+  min-width: 170px;
+  background: #2c5282;
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 20px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.btn-main:hover {
+  background: #1e3a5f;
+  color: #fff;
+}
+
+/* Status badges */
+.badge-status {
+  display: inline-block;
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Pagination */
+.pagination-modern {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination-modern a,
+.pagination-modern span {
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: 1px solid #d8ddec;
+  background: #fff;
+  color: #1e3a5f;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.pagination-modern .active,
+.pagination-modern a:hover {
+  background: #2c5282;
+  color: #fff;
 }
 </style>
 
-<h3>My Fund Tracking</h3>
+<div class="page-wrap">
+  <h2 class="page-title">My Fund Tracking</h2>
 
-<table class="table table-bordered table-hover bg-white">
-  <thead class="table-light">
-    <tr>
-      <th>Fund Type</th>
-      <th>Amount</th>
-      <th>Receipt</th>
-      <th>Submitted</th>
-      <th>Status</th>
-    </tr>
-  </thead>
+  <div class="history-grid">
+    {% for d in donations %}
+      <div class="history-card">
 
-  <tbody>
-  {% for d in donations %}
-    <tr>
+        <div class="card-top">
+          <div class="card-icon">💳</div>
+        </div>
 
-      <td>{{ d.fund_type }}</td>
+        <div class="card-body-custom">
 
-      <td>₱{{ d.amount }}</td>
+          <div>
+            <h5>{{ d.fund_type }}</h5>
 
-      <td>
-        {% if d.receipt_image %}
-          <a href="{{ d.receipt_image.url }}" target="_blank">View</a>
-        {% else %}
-          N/A
-        {% endif %}
-      </td>
+            <div class="amount-text">
+              ₱{{ d.amount }}
+            </div>
 
-      <td>
-        {{ d.created_at|date:"M. d, Y" }}<br>
-        <small class="text-muted">
-          {{ d.created_at|date:"g:i A" }}
-        </small>
-      </td>
+            {% if d.status == "Verified" %}
+              <span class="badge-status approved">Approved</span>
+            {% elif d.status == "Rejected" %}
+              <span class="badge-status rejected">Rejected</span>
+            {% else %}
+              <span class="badge-status pending">Pending</span>
+            {% endif %}
 
-      <td>
+            <div class="small-text">
+              Submitted:<br>
+              {{ d.created_at|date:"F d, Y" }}<br>
+              {{ d.created_at|date:"g:i A" }}
+            </div>
 
-        {% if d.status == "Verified" %}
+            {% if d.status != "Pending" and d.verified_at %}
+              <div class="small-text mt-2">
+                Updated:<br>
+                {{ d.verified_at|date:"F d, Y" }}<br>
+                {{ d.verified_at|date:"g:i A" }}
+              </div>
+            {% endif %}
+          </div>
 
-          <span class="badge-approved">Approved</span><br>
+          <div class="mt-3">
+            {% if d.receipt_image %}
+              <a href="{{ d.receipt_image.url }}" target="_blank" class="btn-main">
+                View Receipt
+              </a>
+            {% else %}
+              <span class="small-text">No receipt uploaded</span>
+            {% endif %}
+          </div>
 
-          <small class="text-muted">
-            {{ d.verified_at|date:"M. d, Y" }}<br>
-            {{ d.verified_at|date:"g:i A" }}
-          </small>
+        </div>
+      </div>
 
-        {% elif d.status == "Rejected" %}
+    {% empty %}
+      <p class="text-center">No fund records yet.</p>
+    {% endfor %}
+  </div>
 
-          <span class="badge-rejected">Rejected</span><br>
+  <!-- Pagination -->
+  <div class="pagination-modern">
 
-          <small class="text-muted">
-            {{ d.verified_at|date:"M. d, Y" }}<br>
-            {{ d.verified_at|date:"g:i A" }}
-          </small>
+    {% if donations.has_previous %}
+      <a href="?page={{ donations.previous_page_number }}">← Previous</a>
+    {% else %}
+      <span>← Previous</span>
+    {% endif %}
 
-        {% else %}
+    {% for num in donations.paginator.page_range %}
+      {% if donations.number == num %}
+        <span class="active">{{ num }}</span>
+      {% else %}
+        <a href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
 
-          <span class="badge-pending">Pending</span><br>
+    {% if donations.has_next %}
+      <a href="?page={{ donations.next_page_number }}">Next →</a>
+    {% else %}
+      <span>Next →</span>
+    {% endif %}
 
-          <small class="text-muted">
-            Waiting for admin review
-          </small>
-
-        {% endif %}
-
-      </td>
-
-    </tr>
-
-  {% empty %}
-    <tr>
-      <td colspan="5" class="text-center text-muted py-4">
-        No fund records yet
-      </td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
+  </div>
+</div>
 
 {% endblock %}

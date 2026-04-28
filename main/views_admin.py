@@ -260,15 +260,7 @@ from .models import Donation
 
 @user_passes_test(admin_only)
 def admin_fundtracking_list(request):
-    fund_type = request.GET.get('type', 'All')
-
     donations = Donation.objects.select_related('member').order_by('-created_at')
-
-    if fund_type == 'Donation':
-        donations = donations.filter(fund_type='Donation')
-
-    elif fund_type == 'Offering':
-        donations = donations.filter(fund_type='Offering')
 
     total_amount = donations.aggregate(
         total=Sum('amount')
@@ -276,7 +268,6 @@ def admin_fundtracking_list(request):
 
     return render(request, 'admin_ui/fund_tracking/list.html', {
         'donations': donations,
-        'selected_type': fund_type,
         'total_amount': total_amount,
     })
 

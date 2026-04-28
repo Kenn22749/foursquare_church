@@ -4,6 +4,7 @@ from .forms import DonationForm
 from .models import Donation
 from django.contrib import messages
 from django.utils import timezone
+from django.core.paginator import Paginator
 
 @login_required
 def donate(request):
@@ -12,6 +13,7 @@ def donate(request):
         if form.is_valid():
             donation = form.save(commit=False)
             donation.member = request.user
+            donation.fund_type = 'Donations'
             donation.method = 'GCash'
             donation.status = 'Pending'
             donation.verified = False
@@ -26,7 +28,12 @@ def donate(request):
 
 @login_required
 def history(request):
-    donations = Donation.objects.filter(member=request.user).order_by('-created_at')
+    donations_list = Donation.objects.filter(member=request.user).order_by('-created_at')
+
+    paginator = Paginator(donations_list, 5)
+    page_number = request.GET.get('page')
+    donations = paginator.get_page(page_number)
+
     return render(request, 'donations/history.html', {'donations': donations})
 
 # Optional: view for admin to verify via front-end (but admin can use /admin)

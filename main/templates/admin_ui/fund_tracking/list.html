@@ -2,29 +2,10 @@
 
 {% block content %}
 <h2 class="mb-3">Fund Tracking</h2>
-<p class="text-muted">List of all church fund records.</p>
-
-<div class="mb-3">
-
-  <a href="?type=All"
-     class="btn btn-sm {% if selected_type == 'All' %}btn-dark{% else %}btn-outline-dark{% endif %}">
-     All
-  </a>
-
-  <a href="?type=Donation"
-     class="btn btn-sm {% if selected_type == 'Donation' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-     Donation
-  </a>
-
-  <a href="?type=Offering"
-     class="btn btn-sm {% if selected_type == 'Offering' %}btn-success{% else %}btn-outline-success{% endif %}">
-     Offering
-  </a>
-
-</div>
+<p class="text-muted">List of all GCash donations for church fund records.</p>
 
 <div class="alert alert-info">
-  <strong>Total {{ selected_type }}:</strong>
+  <strong>Total Donations:</strong>
   ₱{{ total_amount }}
 </div>
 
@@ -52,7 +33,7 @@
         {% if d.receipt_image %}
           <a href="{{ d.receipt_image.url }}" target="_blank"
              class="btn btn-sm btn-outline-primary">
-             View
+            View
           </a>
         {% else %}
           No receipt
@@ -69,12 +50,10 @@
         {% endif %}
       </td>
 
-      <td>{{ d.created_at|date:"M. d, Y, g:i a" }}</td>
+      <td>{{ d.created_at|date:"M. d, Y, g:i A" }}</td>
 
       <td>
-
         {% if d.status == "Pending" %}
-
           <a href="{% url 'admin-fundtracking-verify' d.id %}" class="btn btn-sm btn-success mb-1">
             Verify
           </a>
@@ -84,7 +63,6 @@
           </a>
 
         {% elif d.status == "Verified" %}
-
           <a href="{% url 'admin-fundtracking-reject' d.id %}" class="btn btn-sm btn-danger mb-1">
             Change to Reject
           </a>
@@ -94,7 +72,6 @@
           </a>
 
         {% elif d.status == "Rejected" %}
-
           <a href="{% url 'admin-fundtracking-verify' d.id %}" class="btn btn-sm btn-success mb-1">
             Change to Verify
           </a>
@@ -102,9 +79,7 @@
           <a href="{% url 'admin-fundtracking-reset' d.id %}" class="btn btn-sm btn-secondary mb-1">
             Reset
           </a>
-
         {% endif %}
-
       </td>
     </tr>
 

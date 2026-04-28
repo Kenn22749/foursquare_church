@@ -49,9 +49,8 @@ class MemberProfileForm(forms.ModelForm):
 class DonationForm(forms.ModelForm):
     class Meta:
         model = Donation
-        fields = ['fund_type', 'amount', 'receipt_image']
+        fields = ['amount', 'receipt_image']
         widgets = {
-            'fund_type': forms.Select(attrs={'class': 'form-control'}),
             'amount': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter amount'

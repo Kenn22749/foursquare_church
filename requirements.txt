@@ -5,7 +5,9 @@ cloudinary==1.44.2
 dj-database-url==3.0.1
 Django==5.2.7
 django-cloudinary-storage==0.3.0
+gunicorn==25.3.0
 idna==3.13
+packaging==26.2
 pillow==12.0.0
 psycopg==3.2.12
 psycopg2-binary==2.9.11

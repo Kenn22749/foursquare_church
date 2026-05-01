@@ -60,37 +60,6 @@
   font-size: 28px;
 }
 
-.calendar-icon {
-  width: 30px;
-  height: 30px;
-  border: 3px solid #2c5282;
-  border-radius: 7px;
-  position: relative;
-  display: inline-block;
-}
-
-.calendar-icon::before {
-  content: "";
-  position: absolute;
-  top: 6px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: #2c5282;
-}
-
-.calendar-icon::after {
-  content: "";
-  position: absolute;
-  top: -7px;
-  left: 6px;
-  width: 4px;
-  height: 8px;
-  background: #2c5282;
-  box-shadow: 14px 0 #2c5282;
-  border-radius: 4px;
-}
-
 .card-body-custom {
   padding: 52px 24px 24px;
   text-align: center;
@@ -167,8 +136,7 @@
     {% for event in events %}
       <div class="modern-card">
         <div class="card-top">
-          <div class="card-icon">
-         <span class="calendar-icon"></span>
+          <div class="card-icon">📅</div>
         </div>
 
         <div class="card-body-custom">

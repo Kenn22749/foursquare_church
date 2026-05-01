@@ -99,6 +99,26 @@
     32% 48%,20% 28%);
 }
 
+.dove-icon {
+    width: 28px;
+    height: 28px;
+    border: 3px solid #f59e0b;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(45deg);
+    position: relative;
+}
+
+.dove-icon::before {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #f59e0b;
+    border-radius: 50%;
+    top: -6px;
+    right: -6px;
+}
+
 .card-body-custom{
     padding:48px 18px 18px;
     text-align:center;
@@ -236,7 +256,7 @@
         <div class="dashboard-card">
             <div class="card-top top-gold">
                 <div class="symbol-box">
-                    <span class="symbol gold">🕊</span>
+                    <div class="dove-icon"></div>
                 </div>
             </div>
 

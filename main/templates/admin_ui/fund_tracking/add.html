@@ -1,37 +1,82 @@
 {% extends 'admin_ui/layout.html' %}
 {% block content %}
 
-<h2>Add Transaction</h2>
-<p class="text-muted">Manually add Cash or GCash transaction.</p>
+<h2>Add Cash Transaction</h2>
+<p class="text-muted">
+    Manually add cash donation transaction. You may select a registered member or type an unregistered donor name.
+</p>
 
 <form method="POST" class="bg-white p-4 rounded shadow-sm">
     {% csrf_token %}
 
     <div class="mb-3">
-        <label>Member</label>
-        <select name="member" class="form-control">
+        <label>Registered Member</label>
+
+        <input list="members-list"
+               id="member_display"
+               class="form-control"
+               placeholder="Type registered member username...">
+
+        <input type="hidden" name="member" id="member_id">
+
+        <datalist id="members-list">
             {% for m in members %}
-            <option value="{{ m.id }}">{{ m.username }}</option>
+                <option value="{{ m.username }}" data-id="{{ m.id }}"></option>
             {% endfor %}
-        </select>
+        </datalist>
+
+        <small class="text-muted">
+            Use this if the donor already has an account.
+        </small>
+    </div>
+
+    <div class="mb-3">
+        <label>Unregistered Donor Name</label>
+        <input type="text"
+               name="donor_name"
+               id="donor_name"
+               class="form-control"
+               placeholder="Type donor name if not registered">
+
+        <small class="text-muted">
+            Use this if the donor is not registered in the system yet.
+        </small>
     </div>
 
     <div class="mb-3">
         <label>Amount</label>
-        <input type="number" step="0.01" name="amount" class="form-control">
+        <input type="number" step="0.01" name="amount" class="form-control" required>
     </div>
 
     <div class="mb-3">
         <label>Method</label>
-        <select name="method" class="form-control">
-            <option value="Cash">Cash</option>
-            <option value="GCash">GCash</option>
-        </select>
+        <input type="text" value="Cash" class="form-control" readonly>
     </div>
 
-    <button type="submit" class="btn btn-success">Save</button>
+    <button type="submit" class="btn btn-success">Save Cash Transaction</button>
     <a href="{% url 'admin-fundtracking-list' %}" class="btn btn-secondary">Cancel</a>
-
 </form>
+
+<script>
+document.getElementById('member_display').addEventListener('input', function() {
+    const input = this.value;
+    const options = document.querySelectorAll('#members-list option');
+    const donorName = document.getElementById('donor_name');
+
+    let found = false;
+
+    options.forEach(option => {
+        if (option.value === input) {
+            document.getElementById('member_id').value = option.dataset.id;
+            donorName.value = "";
+            found = true;
+        }
+    });
+
+    if (!found) {
+        document.getElementById('member_id').value = "";
+    }
+});
+</script>
 
 {% endblock %}

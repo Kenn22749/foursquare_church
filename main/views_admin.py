@@ -1,18 +1,19 @@
+from decimal import Decimal, InvalidOperation
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
-from .models import Announcement
-from .models import Event
-from .models import Ministry
-from django.utils import timezone
-from .models import MemberProfile
 from django.contrib.auth.models import User
-from decimal import Decimal, InvalidOperation
+from django.utils import timezone
 from django.db.models import Sum
+from django.core.paginator import Paginator
+
+from .models import Announcement, Event, Ministry, MemberProfile, Donation
 
 
 def admin_only(user):
     return user.is_superuser or user.is_staff
+
 
 # -----------------------
 #   MEMBERPROFILE CRUD
@@ -45,7 +46,6 @@ def admin_memberprofile_edit(request, pk):
             profile.photo = request.FILES['photo']
 
         profile.save()
-
         messages.success(request, "Member profile updated successfully.")
         return redirect('admin-memberprofile-list')
 
@@ -57,17 +57,19 @@ def admin_memberprofile_edit(request, pk):
 @user_passes_test(admin_only)
 def admin_memberprofile_delete(request, pk):
     profile = MemberProfile.objects.filter(pk=pk).first()
+
     if profile:
         profile.delete()
         messages.success(request, "Member profile deleted successfully.")
     else:
         messages.info(request, "Member profile does not exist.")
+
     return redirect('admin-memberprofile-list')
+
 
 @user_passes_test(admin_only)
 def admin_memberprofile_approve(request, pk):
     profile = get_object_or_404(MemberProfile, pk=pk)
-
     profile.user.is_active = True
     profile.user.save()
 
@@ -76,7 +78,7 @@ def admin_memberprofile_approve(request, pk):
 
 
 # -----------------------
-#   MINISTRIES CRUD
+#   ACTIVITIES CRUD
 # -----------------------
 
 @user_passes_test(admin_only)
@@ -130,16 +132,23 @@ def admin_ministry_edit(request, pk):
 @user_passes_test(admin_only)
 def admin_ministry_delete(request, pk):
     ministry = get_object_or_404(Ministry, pk=pk)
-
     ministry.delete()
+
     messages.success(request, "Activity deleted successfully.")
     return redirect('admin-ministry-list')
 
 
+# -----------------------
+#   EVENTS CRUD
+# -----------------------
+
 @user_passes_test(admin_only)
 def admin_event_list(request):
     events = Event.objects.order_by('-date', '-time')
-    return render(request, 'admin_ui/events/list.html', {'events': events})
+    return render(request, 'admin_ui/events/list.html', {
+        'events': events
+    })
+
 
 @user_passes_test(admin_only)
 def admin_event_add(request):
@@ -162,14 +171,17 @@ def admin_event_add(request):
             is_active=is_active,
             created_by=request.user
         )
+
         messages.success(request, 'Event created successfully!')
         return redirect('admin-event-list')
 
     return render(request, 'admin_ui/events/add.html')
 
+
 @user_passes_test(admin_only)
 def admin_event_edit(request, pk):
     event = get_object_or_404(Event, pk=pk)
+
     if request.method == 'POST':
         event.title = request.POST.get('title')
         event.description = request.POST.get('description')
@@ -179,20 +191,27 @@ def admin_event_edit(request, pk):
         event.capacity = request.POST.get('capacity') if request.POST.get('capacity') else None
         event.is_active = bool(request.POST.get('is_active'))
         event.save()
+
         messages.success(request, 'Event updated successfully!')
         return redirect('admin-event-list')
 
-    return render(request, 'admin_ui/events/edit.html', {'event': event})
+    return render(request, 'admin_ui/events/edit.html', {
+        'event': event
+    })
+
 
 @user_passes_test(admin_only)
 def admin_event_delete(request, pk):
     event = get_object_or_404(Event, pk=pk)
     event.delete()
+
     messages.success(request, 'Event deleted successfully!')
     return redirect('admin-event-list')
 
 
-
+# -----------------------
+#   ANNOUNCEMENTS CRUD
+# -----------------------
 
 @user_passes_test(admin_only)
 def admin_announcement_list(request):
@@ -244,11 +263,16 @@ def admin_announcement_edit(request, pk):
 def admin_announcement_delete(request, pk):
     announcement = get_object_or_404(Announcement, pk=pk)
     announcement.delete()
+
     messages.success(request, 'Announcement deleted.')
     return redirect('admin-announcement-list')
 
 
-@user_passes_test(lambda u: u.is_superuser or u.is_staff)
+# -----------------------
+#   ADMIN DASHBOARD
+# -----------------------
+
+@user_passes_test(admin_only)
 def admin_dashboard(request):
     return render(request, 'admin_ui/dashboard.html')
 
@@ -257,19 +281,89 @@ def admin_dashboard(request):
 #   FUND TRACKING
 # -----------------------
 
-from .models import Donation
-
 @user_passes_test(admin_only)
 def admin_fundtracking_list(request):
-    donations = Donation.objects.select_related('member').order_by('-created_at')
+    selected_method = request.GET.get("method", "All")
 
-    total_amount = donations.aggregate(
-        total=Sum('amount')
-    )['total'] or 0
+    donations = Donation.objects.select_related("member").order_by("-created_at")
 
-    return render(request, 'admin_ui/fund_tracking/list.html', {
-        'donations': donations,
-        'total_amount': total_amount,
+    if selected_method == "Cash":
+        donations = donations.filter(method="Cash")
+    elif selected_method == "GCash":
+        donations = donations.filter(method="GCash")
+
+    # ✅ ADD PAGINATION (15 per page)
+    paginator = Paginator(donations, 15)
+    page_number = request.GET.get("page")
+    donations = paginator.get_page(page_number)
+
+    all_donations = Donation.objects.all()
+
+    total_amount = all_donations.aggregate(total=Sum("amount"))["total"] or 0
+    total_cash = all_donations.filter(method="Cash").aggregate(total=Sum("amount"))["total"] or 0
+    total_gcash = all_donations.filter(method="GCash").aggregate(total=Sum("amount"))["total"] or 0
+
+    return render(request, "admin_ui/fund_tracking/list.html", {
+        "donations": donations,
+        "total_amount": total_amount,
+        "total_cash": total_cash,
+        "total_gcash": total_gcash,
+        "selected_method": selected_method,
+    })
+
+
+@user_passes_test(admin_only)
+def admin_fundtracking_add(request):
+    members = User.objects.filter(
+        is_staff=False,
+        is_superuser=False
+    ).order_by("username")
+
+    if request.method == "POST":
+        member_id = request.POST.get("member")
+        donor_name = request.POST.get("donor_name", "").strip()
+        amount_input = request.POST.get("amount", "").strip()
+
+        if not member_id and not donor_name:
+            messages.error(
+                request,
+                "Please select a registered member or type an unregistered donor name."
+            )
+            return render(request, "admin_ui/fund_tracking/add.html", {
+                "members": members
+            })
+
+        if not amount_input:
+            messages.error(request, "Amount is required.")
+            return render(request, "admin_ui/fund_tracking/add.html", {
+                "members": members
+            })
+
+        try:
+            amount = Decimal(amount_input)
+        except InvalidOperation:
+            messages.error(request, "Invalid amount.")
+            return render(request, "admin_ui/fund_tracking/add.html", {
+                "members": members
+            })
+
+        Donation.objects.create(
+            member_id=member_id if member_id else None,
+            donor_name=donor_name,
+            fund_type="Donations",
+            amount=amount,
+            method="Cash",
+            status="Verified",
+            verified=True,
+            verified_by=request.user,
+            verified_at=timezone.now()
+        )
+
+        messages.success(request, "Cash transaction added successfully.")
+        return redirect("admin-fundtracking-list")
+
+    return render(request, "admin_ui/fund_tracking/add.html", {
+        "members": members
     })
 
 
@@ -300,6 +394,7 @@ def admin_fundtracking_reject(request, pk):
     messages.success(request, "Transaction rejected.")
     return redirect('admin-fundtracking-list')
 
+
 @user_passes_test(admin_only)
 def admin_fundtracking_reset(request, pk):
     donation = get_object_or_404(Donation, pk=pk)
@@ -314,67 +409,28 @@ def admin_fundtracking_reset(request, pk):
     return redirect('admin-fundtracking-list')
 
 
-def admin_fundtracking_add(request):
-    members = User.objects.all().order_by("username")
-
-    if request.method == "POST":
-        member_id = request.POST.get("member")
-        amount_input = request.POST.get("amount", "").strip()
-        method = request.POST.get("method")
-
-        # Validate amount
-        if not amount_input:
-            messages.error(request, "Amount is required.")
-            return render(request, "admin_ui/fund_tracking/add.html", {
-                "members": members
-            })
-
-        try:
-            amount = Decimal(amount_input)
-        except InvalidOperation:
-            messages.error(request, "Invalid amount.")
-            return render(request, "admin_ui/fund_tracking/add.html", {
-                "members": members
-            })
-
-        Donation.objects.create(
-            member_id=member_id,
-            fund_type="Donations",
-            amount=amount,
-            method=method,
-            status="Verified" if method == "Cash" else "Pending",
-            verified=True if method == "Cash" else False
-        )
-
-        messages.success(request, "Transaction added successfully.")
-        return redirect("admin-fundtracking-list")
-
-    return render(request, "admin_ui/fund_tracking/add.html", {
-        "members": members
-    })
-
-
 @user_passes_test(admin_only)
 def admin_fundtracking_edit(request, pk):
     donation = get_object_or_404(Donation, pk=pk)
-    members = User.objects.all().order_by('username')
+    members = User.objects.filter(
+        is_staff=False,
+        is_superuser=False
+    ).order_by("username")
 
     if request.method == "POST":
-        donation.member_id = request.POST.get("member")
+        donation.member_id = request.POST.get("member") or None
+        donation.donor_name = request.POST.get("donor_name", "").strip()
         donation.amount = request.POST.get("amount")
-        donation.method = request.POST.get("method")
 
-        # REQUIRED FIX
         if not donation.status:
             donation.status = "Verified"
 
-        # Optional smart logic
         if donation.method == "Cash":
             donation.status = "Verified"
             donation.verified = True
+            donation.verified_by = request.user
             donation.verified_at = timezone.now()
         else:
-            # GCash keep current status unless empty
             donation.status = donation.status or "Pending"
 
         donation.save()

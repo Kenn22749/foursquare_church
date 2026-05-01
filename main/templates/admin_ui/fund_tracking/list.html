@@ -2,22 +2,55 @@
 
 {% block content %}
 <h2 class="mb-3">Fund Tracking</h2>
-<p class="text-muted">List of all GCash donations for church fund records.</p>
+<p class="text-muted">List of all GCash and Cash donations for church fund records.</p>
 
 <a href="{% url 'admin-fundtracking-add' %}" class="btn btn-primary mb-3">
-  + Add Transaction
+  + Add Cash Transaction
 </a>
 
-<div class="alert alert-info">
-  <strong>Total Donations:</strong>
-  ₱{{ total_amount }}
+<div class="row mb-3">
+  <div class="col-md-4 mb-2">
+    <div class="alert alert-info mb-0">
+      <strong>Total Donations:</strong> ₱{{ total_amount }}
+    </div>
+  </div>
+
+  <div class="col-md-4 mb-2">
+    <div class="alert alert-success mb-0">
+      <strong>Total Cash:</strong> ₱{{ total_cash }}
+    </div>
+  </div>
+
+  <div class="col-md-4 mb-2">
+    <div class="alert alert-primary mb-0">
+      <strong>Total GCash:</strong> ₱{{ total_gcash }}
+    </div>
+  </div>
+</div>
+
+<div class="mb-3">
+  <a href="?method=All"
+     class="btn btn-sm {% if selected_method == 'All' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+    All
+  </a>
+
+  <a href="?method=Cash"
+     class="btn btn-sm {% if selected_method == 'Cash' %}btn-success{% else %}btn-outline-success{% endif %}">
+    Cash
+  </a>
+
+  <a href="?method=GCash"
+     class="btn btn-sm {% if selected_method == 'GCash' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+    GCash
+  </a>
 </div>
 
 <table class="table table-bordered table-hover bg-white">
   <thead class="table-light">
     <tr>
-      <th>Member</th>
+      <th>Member / Donor</th>
       <th>Fund Type</th>
+      <th>Method</th>
       <th>Amount</th>
       <th>Receipt</th>
       <th>Status</th>
@@ -29,8 +62,17 @@
   <tbody>
   {% for d in donations %}
     <tr>
-      <td>{{ d.member.username }}</td>
+      <td>
+        {% if d.member %}
+          {{ d.member.username }}
+        {% else %}
+          {{ d.donor_name }}
+          <span class="badge bg-secondary">Unregistered</span>
+        {% endif %}
+      </td>
+
       <td>{{ d.fund_type }}</td>
+      <td>{{ d.method }}</td>
       <td>₱{{ d.amount }}</td>
 
       <td>
@@ -39,6 +81,8 @@
              class="btn btn-sm btn-outline-primary">
             View
           </a>
+        {% elif d.method == "Cash" %}
+          Cash transaction
         {% else %}
           No receipt
         {% endif %}
@@ -47,10 +91,8 @@
       <td>
         {% if d.status == "Verified" %}
           <span class="badge bg-success">Verified</span>
-
         {% elif d.status == "Rejected" %}
           <span class="badge bg-danger">Rejected</span>
-
         {% else %}
           <span class="badge bg-warning text-dark">Pending</span>
         {% endif %}
@@ -59,62 +101,112 @@
       <td>{{ d.created_at|date:"M. d, Y, g:i A" }}</td>
 
       <td>
+        {% if d.method == "Cash" %}
+          <span class="badge bg-secondary">Manual Cash Record</span>
+        {% else %}
 
-        <!-- EDIT BUTTON -->
-        <a href="{% url 'admin-fundtracking-edit' d.id %}"
-           class="btn btn-sm btn-warning mb-1">
-          Edit
-        </a>
-
-        {% if d.status == "Pending" %}
-
-          <a href="{% url 'admin-fundtracking-verify' d.id %}"
-             class="btn btn-sm btn-success mb-1">
-            Verify
+          <a href="{% url 'admin-fundtracking-edit' d.id %}"
+             class="btn btn-sm btn-warning mb-1">
+            Edit
           </a>
 
-          <a href="{% url 'admin-fundtracking-reject' d.id %}"
-             class="btn btn-sm btn-danger mb-1">
-            Reject
-          </a>
+          {% if d.status == "Pending" %}
+            <a href="{% url 'admin-fundtracking-verify' d.id %}"
+               class="btn btn-sm btn-success mb-1">
+              Verify
+            </a>
 
-        {% elif d.status == "Verified" %}
+            <a href="{% url 'admin-fundtracking-reject' d.id %}"
+               class="btn btn-sm btn-danger mb-1">
+              Reject
+            </a>
 
-          <a href="{% url 'admin-fundtracking-reject' d.id %}"
-             class="btn btn-sm btn-danger mb-1">
-            Change to Reject
-          </a>
+          {% elif d.status == "Verified" %}
+            <a href="{% url 'admin-fundtracking-reject' d.id %}"
+               class="btn btn-sm btn-danger mb-1">
+              Change to Reject
+            </a>
 
-          <a href="{% url 'admin-fundtracking-reset' d.id %}"
-             class="btn btn-sm btn-secondary mb-1">
-            Reset
-          </a>
+            <a href="{% url 'admin-fundtracking-reset' d.id %}"
+               class="btn btn-sm btn-secondary mb-1">
+              Reset
+            </a>
 
-        {% elif d.status == "Rejected" %}
+          {% elif d.status == "Rejected" %}
+            <a href="{% url 'admin-fundtracking-verify' d.id %}"
+               class="btn btn-sm btn-success mb-1">
+              Change to Verify
+            </a>
 
-          <a href="{% url 'admin-fundtracking-verify' d.id %}"
-             class="btn btn-sm btn-success mb-1">
-            Change to Verify
-          </a>
-
-          <a href="{% url 'admin-fundtracking-reset' d.id %}"
-             class="btn btn-sm btn-secondary mb-1">
-            Reset
-          </a>
-
+            <a href="{% url 'admin-fundtracking-reset' d.id %}"
+               class="btn btn-sm btn-secondary mb-1">
+              Reset
+            </a>
+          {% endif %}
         {% endif %}
-
       </td>
     </tr>
 
   {% empty %}
     <tr>
-      <td colspan="7" class="text-center text-muted py-4">
+      <td colspan="8" class="text-center text-muted py-4">
         No fund records yet
       </td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
+
+<!-- PAGINATION (RIGHT-ALIGNED) -->
+{% if donations.has_other_pages %}
+<div class="d-flex justify-content-end mt-3 pe-2 mb-3">
+  <nav>
+    <ul class="pagination">
+
+      {% if donations.has_previous %}
+        <li class="page-item">
+          <a class="page-link"
+             href="?method={{ selected_method }}&page={{ donations.previous_page_number }}">
+            ←
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">←</span>
+        </li>
+      {% endif %}
+
+      {% for num in donations.paginator.page_range %}
+        {% if donations.number == num %}
+          <li class="page-item active">
+            <span class="page-link">{{ num }}</span>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link"
+               href="?method={{ selected_method }}&page={{ num }}">
+              {{ num }}
+            </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if donations.has_next %}
+        <li class="page-item">
+          <a class="page-link"
+             href="?method={{ selected_method }}&page={{ donations.next_page_number }}">
+            →
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">→</span>
+        </li>
+      {% endif %}
+
+    </ul>
+  </nav>
+</div>
+{% endif %}
 
 {% endblock %}

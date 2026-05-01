@@ -1,0 +1,67 @@
+{% extends 'admin_ui/layout.html' %}
+{% block content %}
+
+<style>
+.card-box {
+  background: #fff;
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+</style>
+
+<div class="container mt-4">
+
+  <div class="card-box">
+
+    <div class="header-top">
+      <div>
+        <h3>📅 Registered Members</h3>
+        <p class="text-muted mb-0">Event: <strong>{{ event.title }}</strong></p>
+      </div>
+
+      <a href="{% url 'admin-event-list' %}" class="btn btn-secondary">Back</a>
+    </div>
+
+    <div class="mb-3">
+      <span class="badge bg-primary">Total: {{ registrants|length }}</span>
+    </div>
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Status</th>
+          <th>Registered At</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for r in registrants %}
+        <tr>
+          <td><strong>{{ r.member.username }}</strong></td>
+          <td>{{ r.status }}</td>
+          <td>{{ r.registered_at|date:"M. d, Y, g:i A" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3" class="text-center text-muted">
+            No members registered yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+{% endblock %}

@@ -42,12 +42,14 @@ path('admin_ui/announcements/<int:pk>/delete/', views_admin.admin_announcement_d
 
 # Admin CRUD for Events
 path('admin_ui/events/', views_admin.admin_event_list, name='admin-event-list'),
+path('admin_ui/events/<int:pk>/registrants/', views_admin.admin_event_registrants, name='admin-event-registrants'),
 path('admin_ui/events/add/', views_admin.admin_event_add, name='admin-event-add'),
 path('admin_ui/events/<int:pk>/edit/', views_admin.admin_event_edit, name='admin-event-edit'),
 path('admin_ui/events/<int:pk>/delete/', views_admin.admin_event_delete, name='admin-event-delete'),
 
 # Admin CRUD for Ministries
 path('admin_ui/ministries/', views_admin.admin_ministry_list, name='admin-ministry-list'),
+path('admin_ui/ministries/<int:pk>/volunteers/', views_admin.admin_ministry_volunteers, name='admin-ministry-volunteers'),
 path('admin_ui/ministries/add/', views_admin.admin_ministry_add, name='admin-ministry-add'),
 path('admin_ui/ministries/<int:pk>/edit/', views_admin.admin_ministry_edit, name='admin-ministry-edit'),
 path('admin_ui/ministries/<int:pk>/delete/', views_admin.admin_ministry_delete, name='admin-ministry-delete'),

@@ -1,0 +1,123 @@
+{% extends 'admin_ui/layout.html' %}
+{% block content %}
+
+<style>
+.card-box {
+  background: #fff;
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-title h3 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.activity-name {
+  margin-top: 4px;
+  color: #555;
+}
+
+.total-badge {
+  display: inline-block;
+  margin: 12px 0 18px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #0d6efd;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.table thead th {
+  font-weight: 700;
+  color: #000;
+}
+
+.table td,
+.table th {
+  padding: 14px 10px;
+}
+
+@media (max-width: 768px) {
+  .header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-top .btn {
+    align-self: flex-start;
+  }
+}
+</style>
+
+<div class="container mt-4">
+  <div class="card-box">
+
+    <div class="header-top">
+      <div>
+        <div class="header-title">
+          <span style="font-size: 28px;">🤝</span>
+          <h3>Joined Members</h3>
+        </div>
+        <p class="activity-name mb-0">
+          Activity: <strong>{{ ministry.name }}</strong>
+        </p>
+      </div>
+
+      <a href="{% url 'admin-ministry-list' %}" class="btn btn-secondary">
+        Back
+      </a>
+    </div>
+
+    <span class="total-badge">Total: {{ volunteers|length }}</span>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Joined At</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for v in volunteers %}
+          <tr>
+            <td><strong>{{ v.member.username }}</strong></td>
+            <td>{{ v.role|default:"—" }}</td>
+            <td>{{ v.status }}</td>
+            <td>{{ v.assigned_at|date:"M. d, Y, g:i A" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center text-muted py-4">
+              No members joined yet.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

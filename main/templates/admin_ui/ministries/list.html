@@ -1,58 +1,93 @@
 {% extends 'admin_ui/layout.html' %}
-
 {% block content %}
+
+<style>
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.page-title {
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.table-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+</style>
+
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+
+  <div class="page-header">
     <h2 class="page-title">🤝 Activities</h2>
     <a href="{% url 'admin-ministry-add' %}" class="btn btn-primary">+ Add New</a>
   </div>
 
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
+  {% for message in messages %}
+    <div class="alert alert-success">{{ message }}</div>
+  {% endfor %}
 
-  <div class="table-responsive">
+  <div class="table-card">
     <table class="table table-hover align-middle">
-      <thead class="table-light">
+      <thead>
         <tr>
           <th>Name</th>
           <th>Coordinator</th>
           <th>Description</th>
-          <th>Active</th>
-          <th style="width: 160px;">Actions</th>
+          <th>Status</th>
+          <th width="240">Actions</th>
         </tr>
       </thead>
 
       <tbody>
         {% for item in ministries %}
         <tr>
-          <td>{{ item.name }}</td>
+          <td><strong>{{ item.name }}</strong></td>
           <td>{{ item.coordinator|default:"—" }}</td>
-          <td style="max-width: 280px;" class="text-muted">
+
+          <td class="text-muted" style="max-width:250px;">
             {{ item.description|truncatechars:50 }}
           </td>
-          <td>{{ item.is_active|yesno:"Yes,No" }}</td>
 
           <td>
-            <a href="{% url 'admin-ministry-edit' item.id %}" class="btn btn-sm btn-warning text-white">Edit</a>
+            {% if item.is_active %}
+              <span class="badge bg-success">Active</span>
+            {% else %}
+              <span class="badge bg-danger">Inactive</span>
+            {% endif %}
+          </td>
+
+          <td>
+            <a href="{% url 'admin-ministry-volunteers' item.id %}" class="btn btn-sm btn-info text-white">
+              View Members
+            </a>
+
+            <a href="{% url 'admin-ministry-edit' item.id %}" class="btn btn-sm btn-warning text-white">
+              Edit
+            </a>
+
             <a href="{% url 'admin-ministry-delete' item.id %}" class="btn btn-sm btn-danger"
-               onclick="return confirm('Delete this activities?');">Delete</a>
+               onclick="return confirm('Delete this activity?');">
+              Delete
+            </a>
           </td>
         </tr>
+
         {% empty %}
-        <tr><td colspan="5" class="text-center text-muted">No activities found.</td></tr>
+        <tr>
+          <td colspan="5" class="text-center text-muted">No activities found.</td>
+        </tr>
         {% endfor %}
       </tbody>
+
     </table>
   </div>
-</div>
 
-<style>
-.page-title {
-  color: #3b3b98;
-  font-weight: 600;
-}
-</style>
+</div>
 {% endblock %}

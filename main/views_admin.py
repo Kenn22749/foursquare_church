@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.db.models import Sum
 from django.core.paginator import Paginator
 
-from .models import Announcement, Event, Ministry, MemberProfile, Donation
+from .models import Announcement, Event, Ministry, MemberProfile, Donation, EventRegistration, VolunteerAssignment
 
 
 def admin_only(user):
@@ -88,6 +88,16 @@ def admin_ministry_list(request):
         'ministries': ministries
     })
 
+@user_passes_test(admin_only)
+def admin_ministry_volunteers(request, pk):
+    ministry = get_object_or_404(Ministry, pk=pk)
+    volunteers = VolunteerAssignment.objects.filter(ministry=ministry).select_related("member").order_by("-assigned_at")
+
+    return render(request, "admin_ui/ministries/volunteers.html", {
+        "ministry": ministry,
+        "volunteers": volunteers,
+    })
+
 
 @user_passes_test(admin_only)
 def admin_ministry_add(request):
@@ -147,6 +157,16 @@ def admin_event_list(request):
     events = Event.objects.order_by('-date', '-time')
     return render(request, 'admin_ui/events/list.html', {
         'events': events
+    })
+
+@user_passes_test(admin_only)
+def admin_event_registrants(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    registrants = EventRegistration.objects.filter(event=event).select_related("member").order_by("-registered_at")
+
+    return render(request, "admin_ui/events/registrants.html", {
+        "event": event,
+        "registrants": registrants,
     })
 
 

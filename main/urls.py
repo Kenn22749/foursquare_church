@@ -65,6 +65,7 @@ path('admin_ui/fund-tracking/<int:pk>/reject/', views_admin.admin_fundtracking_r
 path('admin_ui/fund-tracking/reset/<int:pk>/', views_admin.admin_fundtracking_reset, name='admin-fundtracking-reset'),
 path('admin_ui/fund-tracking/add/', views_admin.admin_fundtracking_add, name='admin-fundtracking-add'),
 path('admin_ui/fund-tracking/<int:pk>/edit/', views_admin.admin_fundtracking_edit, name='admin-fundtracking-edit'),
+path('admin_ui/fund-tracking/<int:pk>/delete/', views_admin.admin_fundtracking_delete, name='admin-fundtracking-delete'),
 
 
 path(

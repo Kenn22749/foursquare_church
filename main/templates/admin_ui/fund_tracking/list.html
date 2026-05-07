@@ -101,50 +101,73 @@
       <td>{{ d.created_at|date:"M. d, Y, g:i A" }}</td>
 
       <td>
-        {% if d.method == "Cash" %}
-          <span class="badge bg-secondary">Manual Cash Record</span>
-        {% else %}
 
-          <a href="{% url 'admin-fundtracking-edit' d.id %}"
-             class="btn btn-sm btn-warning mb-1">
-            Edit
-          </a>
+  {% if d.method == "Cash" %}
 
-          {% if d.status == "Pending" %}
-            <a href="{% url 'admin-fundtracking-verify' d.id %}"
-               class="btn btn-sm btn-success mb-1">
-              Verify
-            </a>
+    <span class="badge bg-secondary">
+      Manual Cash Record
+    </span>
 
-            <a href="{% url 'admin-fundtracking-reject' d.id %}"
-               class="btn btn-sm btn-danger mb-1">
-              Reject
-            </a>
+    <a href="{% url 'admin-fundtracking-delete' d.id %}"
+       class="btn btn-sm btn-outline-danger mb-1"
+       onclick="return confirm('Delete this transaction? This will deduct it from totals.');">
+      Delete
+    </a>
 
-          {% elif d.status == "Verified" %}
-            <a href="{% url 'admin-fundtracking-reject' d.id %}"
-               class="btn btn-sm btn-danger mb-1">
-              Change to Reject
-            </a>
+  {% else %}
 
-            <a href="{% url 'admin-fundtracking-reset' d.id %}"
-               class="btn btn-sm btn-secondary mb-1">
-              Reset
-            </a>
+    <a href="{% url 'admin-fundtracking-edit' d.id %}"
+       class="btn btn-sm btn-warning mb-1">
+      Edit
+    </a>
 
-          {% elif d.status == "Rejected" %}
-            <a href="{% url 'admin-fundtracking-verify' d.id %}"
-               class="btn btn-sm btn-success mb-1">
-              Change to Verify
-            </a>
+    <a href="{% url 'admin-fundtracking-delete' d.id %}"
+       class="btn btn-sm btn-outline-danger mb-1"
+       onclick="return confirm('Delete this transaction? This will deduct it from totals.');">
+      Delete
+    </a>
 
-            <a href="{% url 'admin-fundtracking-reset' d.id %}"
-               class="btn btn-sm btn-secondary mb-1">
-              Reset
-            </a>
-          {% endif %}
-        {% endif %}
-      </td>
+    {% if d.status == "Pending" %}
+
+      <a href="{% url 'admin-fundtracking-verify' d.id %}"
+         class="btn btn-sm btn-success mb-1">
+        Verify
+      </a>
+
+      <a href="{% url 'admin-fundtracking-reject' d.id %}"
+         class="btn btn-sm btn-danger mb-1">
+        Reject
+      </a>
+
+    {% elif d.status == "Verified" %}
+
+      <a href="{% url 'admin-fundtracking-reject' d.id %}"
+         class="btn btn-sm btn-danger mb-1">
+        Change to Reject
+      </a>
+
+      <a href="{% url 'admin-fundtracking-reset' d.id %}"
+         class="btn btn-sm btn-secondary mb-1">
+        Reset
+      </a>
+
+    {% elif d.status == "Rejected" %}
+
+      <a href="{% url 'admin-fundtracking-verify' d.id %}"
+         class="btn btn-sm btn-success mb-1">
+        Change to Verify
+      </a>
+
+      <a href="{% url 'admin-fundtracking-reset' d.id %}"
+         class="btn btn-sm btn-secondary mb-1">
+        Reset
+      </a>
+
+    {% endif %}
+
+  {% endif %}
+
+</td>
     </tr>
 
   {% empty %}

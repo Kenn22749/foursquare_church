@@ -428,6 +428,13 @@ def admin_fundtracking_reset(request, pk):
     messages.success(request, "Donation status reset to Pending.")
     return redirect('admin-fundtracking-list')
 
+@user_passes_test(admin_only)
+def admin_fundtracking_delete(request, pk):
+    donation = get_object_or_404(Donation, pk=pk)
+    donation.delete()
+    messages.success(request, "Transaction deleted successfully.")
+    return redirect("admin-fundtracking-list")
+
 
 @user_passes_test(admin_only)
 def admin_fundtracking_edit(request, pk):

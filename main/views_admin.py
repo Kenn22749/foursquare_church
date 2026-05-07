@@ -317,11 +317,11 @@ def admin_fundtracking_list(request):
     page_number = request.GET.get("page")
     donations = paginator.get_page(page_number)
 
-    all_donations = Donation.objects.all()
+    verified_donations = Donation.objects.filter(status="Verified")
 
-    total_amount = all_donations.aggregate(total=Sum("amount"))["total"] or 0
-    total_cash = all_donations.filter(method="Cash").aggregate(total=Sum("amount"))["total"] or 0
-    total_gcash = all_donations.filter(method="GCash").aggregate(total=Sum("amount"))["total"] or 0
+    total_amount = verified_donations.aggregate(total=Sum("amount"))["total"] or 0
+    total_cash = verified_donations.filter(method="Cash").aggregate(total=Sum("amount"))["total"] or 0
+    total_gcash = verified_donations.filter(method="GCash").aggregate(total=Sum("amount"))["total"] or 0
 
     return render(request, "admin_ui/fund_tracking/list.html", {
         "donations": donations,
